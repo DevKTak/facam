@@ -81,8 +81,8 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 - 전화번호:
 - 거리(km):
 
-kakomap URL(장소 URL):http://place.map.kakao.com/26338954 -> 검색된 결과에서 장소 URL을 복사하여 붙여넣기 한 후 엔터 -> 브라우져가 실행
-kakomap URL(장소 URL):exit -> exit 입력하면 프로그램이 종료된다.
+kakaomap URL(장소 URL):http://place.map.kakao.com/26338954 -> 검색된 결과에서 장소 URL을 복사하여 붙여넣기 한 후 엔터 -> 브라우져가 실행
+kakaomap URL(장소 URL):exit -> exit 입력하면 프로그램이 종료된다.
 
 프로그램 종료
 ```
@@ -91,11 +91,11 @@ kakomap URL(장소 URL):exit -> exit 입력하면 프로그램이 종료된다.
 ![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/29f90a8e-e132-4a49-81a9-5b431a76151c)
 
 ## 브라우저 실행시 보여지는 화면 예
-> kakomap URL(장소 URL):http://place.map.kakao.com/1550053316
+> kakaomap URL(장소 URL):http://place.map.kakao.com/1550053316
 ![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/b1839baa-d538-4549-a94a-acfab9a8ca84)
 ![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/060488b5-166e-41f9-bae5-17bc26e1ae3c)
 
->kakomap URL(장소 URL):http://place.map.kakao.com/8520288
+>kakaomap URL(장소 URL):http://place.map.kakao.com/8520288
 ![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/9e3dd1ac-ff5c-46f2-8a6a-2aaa449434e4)
 ![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/79c9865b-cdeb-4e3c-aa81-c697023e3eee)
 

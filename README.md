@@ -82,14 +82,13 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 - 거리(km):
 
 kakomap URL(장소 URL) : http://place.map.kakao.com/26338954 -> 브라우져가 실행
-![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/e22d285d-07f6-4e8a-8de9-8d8cde1c145d)
-
 kakomap URL(장소 URL) : http://place.map.kakao.com/26338953 -> 브라우져가 실행
 kakomap URL(장소 URL) : exit
 
 프로그램 종료
 
 ```
+![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/e22d285d-07f6-4e8a-8de9-8d8cde1c145d)
 
 ## 의존성
 

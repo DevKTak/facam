@@ -81,9 +81,9 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 - 전화번호:
 - 거리(km):
 
-kakomap URL(장소 URL) : http://place.map.kakao.com/26338954 -> 브라우져가 실행
-kakomap URL(장소 URL) : http://place.map.kakao.com/26338953 -> 브라우져가 실행
-kakomap URL(장소 URL) : exit
+kakomap URL(장소 URL) : http://place.map.kakao.com/26338954 -> ```검색된 결과에서 장소 URL을 복사하여 붙여넣기 한 후 엔터 -> 브라우져가 실행```
+kakomap URL(장소 URL) : http://place.map.kakao.com/26338953 -> ```검색된 결과에서 장소 URL을 복사하여 붙여넣기 한 후 엔터 -> 브라우져가 실행```
+kakomap URL(장소 URL) : exit -> ```exit 입력하면 프로그램이 종료된다.```
 
 프로그램 종료
 
@@ -101,3 +101,9 @@ kakomap URL(장소 URL) : exit
 - 제시된 기한 내 제출 (5점)
 - 문제 조건 준수한 코드 (5점)
 - 제안된 기능 작동 여부 (5점)
+
+1. 입출력 화면이 잘 설계 되었는가?
+2. JSON 데이터 잘 파싱하여 목록을 출력하였는가?
+3. 번경에 따라 데이터가 잘 출력이 되는가?
+4. 장소가 브라우져에 잘 표시되는가?
+

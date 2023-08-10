@@ -68,7 +68,7 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 검색 반경:  
 
 **주유소 검색 결과**
-- 장소 URL(지도 위치): http://place.map.kakao.com/26338954
+- 장소 URL(지도 위치):
 - 상호명:
 - 주소:
 - 전화번호:
@@ -82,7 +82,6 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 - 거리(km):
 
 kakomap URL(장소 URL):http://place.map.kakao.com/26338954 -> 검색된 결과에서 장소 URL을 복사하여 붙여넣기 한 후 엔터 -> 브라우져가 실행
-kakomap URL(장소 URL):http://place.map.kakao.com/26338953 -> 검색된 결과에서 장소 URL을 복사하여 붙여넣기 한 후 엔터 -> 브라우져가 실행
 kakomap URL(장소 URL):exit -> exit 입력하면 프로그램이 종료된다.
 
 프로그램 종료

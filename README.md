@@ -49,6 +49,8 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 3. 추출한 위치를 사용하여 입력한 반경(radius) 내에서 주유소나 약국을 검색합니다.
 4. 검색 결과(JSON)에서 원하는 정보를 추출하여 표시합니다.
 5. 상위 10개 결과에 대한 추출된 데이터를 표시합니다.
+6. 검색된 결과에서 장소 URL을 입력하면 브라우저에 해당 kakaomap이 출력되도록 한다.
+7. exit를 입력하면 종료한다.
 
 ## 예시 입력 및 출력
 
@@ -66,7 +68,7 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 검색 반경:
 
 **주유소 검색 결과**
-- 장소 URL(지도 위치):
+- 장소 URL(지도 위치): http://place.map.kakao.com/26338954
 - 사업명:
 - 주소:
 - 전화번호:
@@ -78,6 +80,13 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 - 주소:
 - 전화번호:
 - 거리(km):
+
+kakomap URL(장소 URL) : http://place.map.kakao.com/26338954
+kakomap URL(장소 URL) : http://place.map.kakao.com/26338953
+kakomap URL(장소 URL) : exit
+
+프로그램 종료
+
 ```
 
 ## 의존성

@@ -87,10 +87,10 @@ kakomap URL(장소 URL):exit -> exit 입력하면 프로그램이 종료된다.
 프로그램 종료
 ```
 ## 실행화면예시
-```
+``
 ![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/b4333aed-bb9d-4696-9a2a-25a8f83b489b)
 ![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/9b8aa956-1ca2-4019-a9fc-41b26c7b9d8d)
-```
+``
 ## 브라우저 실행시 보여지는 화면 예
 
 ![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/b1839baa-d538-4549-a94a-acfab9a8ca84)

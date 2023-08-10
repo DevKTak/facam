@@ -58,7 +58,7 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 
 ```cmd
 위치 키워드를 입력하세요:  
-검색 반경을 입력하세요 (1000:1km):  
+검색 반경을 입력하세요(1000:1km):  
 ```
 
 ### 출력 화면
@@ -81,9 +81,9 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 - 전화번호:
 - 거리(km):
 
-kakomap URL(장소 URL) : http://place.map.kakao.com/26338954 -> 검색된 결과에서 장소 URL을 복사하여 붙여넣기 한 후 엔터 -> 브라우져가 실행
-kakomap URL(장소 URL) : http://place.map.kakao.com/26338953 -> 검색된 결과에서 장소 URL을 복사하여 붙여넣기 한 후 엔터 -> 브라우져가 실행
-kakomap URL(장소 URL) : exit -> exit 입력하면 프로그램이 종료된다.
+kakomap URL(장소 URL):http://place.map.kakao.com/26338954 -> 검색된 결과에서 장소 URL을 복사하여 붙여넣기 한 후 엔터 -> 브라우져가 실행
+kakomap URL(장소 URL):http://place.map.kakao.com/26338953 -> 검색된 결과에서 장소 URL을 복사하여 붙여넣기 한 후 엔터 -> 브라우져가 실행
+kakomap URL(장소 URL):exit -> exit 입력하면 프로그램이 종료된다.
 
 프로그램 종료
 ```

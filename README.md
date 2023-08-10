@@ -88,7 +88,9 @@ kakomap URL(장소 URL) : exit
 프로그램 종료
 
 ```
+## 브라우져 실행시 보여지는 화면 예
 ![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/e22d285d-07f6-4e8a-8de9-8d8cde1c145d)
+![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/90269aa3-eb9c-4355-b7ea-11ffb0adf58e)
 
 ## 의존성
 

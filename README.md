@@ -81,8 +81,8 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 - 전화번호:
 - 거리(km):
 
-kakomap URL(장소 URL) : http://place.map.kakao.com/26338954
-kakomap URL(장소 URL) : http://place.map.kakao.com/26338953
+kakomap URL(장소 URL) : http://place.map.kakao.com/26338954 -> 브라우져가 실행
+kakomap URL(장소 URL) : http://place.map.kakao.com/26338953 -> 브라우져가 실행
 kakomap URL(장소 URL) : exit
 
 프로그램 종료

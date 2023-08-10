@@ -96,6 +96,8 @@ kakomap URL(장소 URL):exit -> exit 입력하면 프로그램이 종료된다.
 ![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/060488b5-166e-41f9-bae5-17bc26e1ae3c)
 
 >kakomap URL(장소 URL):http://place.map.kakao.com/8520288
+![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/9e3dd1ac-ff5c-46f2-8a6a-2aaa449434e4)
+![image](https://github.com/FastCampusKDTBackend/KDT_Y_BE_Java_Assignment1/assets/15371961/79c9865b-cdeb-4e3c-aa81-c697023e3eee)
 
 ## 의존성
 

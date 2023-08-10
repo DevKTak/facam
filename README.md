@@ -95,7 +95,19 @@ kakomap URL(장소 URL) : exit -> ```exit 입력하면 프로그램이 종료된
 ## 의존성
 
 - Java 8 이상
-
+- httpclient, json API
+```pom.xml
+ <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.5.13</version>
+ </dependency>
+<dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20210307</version> <!-- Replace with the latest version -->
+</dependency>
+```
 ## 평가 기준
 
 - 제시된 기한 내 제출 (5점)

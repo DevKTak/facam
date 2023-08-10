@@ -39,7 +39,7 @@ Kakao 로컬 REST API중 키워드로 장소 검색하기, 카테고리로 장�
 
 ### 단계 2: 로컬 REST API 사용
 
-1. [로컬 REST API 문서](https://developers.kakao.com/docs/latest/ko/local/dev-guide)를 참고하여 키워드로 장소 검색하기와 카테고리 검색을 개발합니다.
+1. [로컬 REST API 문서](https://developers.kakao.com/docs/latest/ko/local/dev-guide)를 참고하여 ```키워드로 장소 검색```하기와 ```카테고리로 장소 검색하기```을 활용하여 개발합니다.
 2. 요청과 응답 구조에 대한 예제 코드를 확인합니다.
 
 ### 단계 3: Java 어플리케이션 구현

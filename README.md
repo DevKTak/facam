@@ -1,5 +1,5 @@
-> # 과제1 : ```위치기반 장소 검색 Java 애플리케이션 개발```
-> (Location Based Place Search Java Application Development)
+> # 과제1 : 위치기반 장소 검색 Java 애플리케이션 개발
+> ```(Location Based Place Search Java Application Development)```
 
 이 Java 어플리케이션은 입력에 기반하여 특정 위치 내의 장소를 검색할 수 있도록 합니다.
 

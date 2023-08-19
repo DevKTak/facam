@@ -1,12 +1,12 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,6 +23,9 @@ import dto.ApiResponse;
 public class Main {
 
 	private static final String REST_API_KEY = "3d5113f27a487c01ac4500942161c28a";
+	private static final String KAKAO_SEARCH_URL = "https://dapi.kakao.com/v2/local/search";
+	private static final String CATEGORY_GROUP_CODE = "PM9";
+	private static final int size = 10;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -35,16 +39,18 @@ public class Main {
 		System.out.println();
 
 		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
-		String kakaoSearchUrl = "https://dapi.kakao.com/v2/local/search";
-		String requestKeywordUrl = kakaoSearchUrl + "/keyword.json?query=" + encodedKeyword;
+		String requestKeywordUrl = KAKAO_SEARCH_URL + "/keyword.json?query=" + encodedKeyword;
 
+		// 키워드로 장소 검색해서 위도와 경도 얻기
 		double[] coordinate = getCoordinateByKeyword(requestKeywordUrl);
 
 		if (coordinate != null) {
 			String requestCategoryUrl =
-				kakaoSearchUrl + "/category.json?category_group_code=PM9&x=" + coordinate[0] + "&y=" + coordinate[1]
-					+ "&radius=" + radius + "&size=10";
+				KAKAO_SEARCH_URL + "/category.json?category_group_code=" + CATEGORY_GROUP_CODE + "&x=" + coordinate[0]
+					+ "&y=" + coordinate[1]
+					+ "&radius=" + radius + "&size=" + size;
 
+			// 카테고리로 장소 검색해서 약국 정보 리스트 10개 얻기
 			List<ApiResponse.PlaceInfoResponse> placeInfoList = getPlaceInfoByCategory(requestCategoryUrl);
 
 			printPlaceInfo(keyword, radius, placeInfoList);
@@ -57,69 +63,82 @@ public class Main {
 					System.out.println("프로그램 종료");
 					break;
 				} else {
-					String osName = System.getProperty("os.name").toLowerCase();
-					String[] command;
-
-					if (osName.contains("win")) {
-						command = new String[] { "cmd", "/c", "start", urlOrExit };
-					} else if (osName.contains("mac")) {
-						command = new String[]{"open", urlOrExit};
-					} else {
-						System.out.println("운영체제가 지원되지 않습니다.");
-						continue;
-					}
-					ProcessBuilder processBuilder = new ProcessBuilder(command);
-					processBuilder.start();
+					openUrlInBrowser(urlOrExit.trim());
 				}
 			}
 		}
 	}
 
+	// 브라우저 오픈하기
+	private static void openUrlInBrowser(String url) {
+		String osName = System.getProperty("os.name").toLowerCase();
+		String[] command;
+
+		if (osName.contains("win")) {
+			command = new String[] {"cmd", "/c", "start", url};
+		} else if (osName.contains("mac")) {
+			command = new String[] {"open", url};
+		} else {
+			System.out.println("운영체제가 지원되지 않습니다.");
+			return;
+		}
+
+		try {
+			ProcessBuilder processBuilder = new ProcessBuilder(command);
+			processBuilder.start();
+		} catch (IOException e) {
+			System.err.println("URL을 열 수 없습니다: " + e);
+		}
+	}
+
+	// 검색 결과 출력하기
 	private static void printPlaceInfo(String keyword, int radius, List<ApiResponse.PlaceInfoResponse> placeInfoList) {
 		System.out.println("입력한 위치 키워드: " + keyword);
 		System.out.println("검색 반경: " + String.format("%.1fkm", radius / 1000d) + System.lineSeparator());
 
 		for (ApiResponse.PlaceInfoResponse placeInfo : placeInfoList) {
-			if (placeInfoList.size() > 0) {
-				System.out.println("** 약국 검색 결과 **");
-				System.out.println("장소 URL(지도 위치): " + placeInfo.place_url());
-				System.out.println("상호명: " + placeInfo.place_name());
-				System.out.println("주소: " + placeInfo.address_name());
-				System.out.println("전화번호: " + placeInfo.phone());
-				System.out.println(
-					"거리(km): " + String.format("%.3fkm", placeInfo.distance() / 1000d) + System.lineSeparator());
-			}
+			System.out.println("** 약국 검색 결과 **");
+			System.out.println("장소 URL(지도 위치): " + placeInfo.place_url());
+			System.out.println("상호명: " + placeInfo.place_name());
+			System.out.println("주소: " + placeInfo.address_name());
+			System.out.println("전화번호: " + placeInfo.phone());
+			System.out.println(
+				"거리(km): " + String.format("%.3fkm", placeInfo.distance() / 1000d) + System.lineSeparator());
 		}
 	}
 
-	private static List<ApiResponse.PlaceInfoResponse> getPlaceInfoByCategory(String requestCategoryUrl) {
-		HttpClient client = HttpClientBuilder.create().build();
-		HttpGet getRequest = new HttpGet(requestCategoryUrl);
-		getRequest.addHeader("Authorization", "KakaoAK " + REST_API_KEY);
+	// 카테고리로 장소 검색하기
+	private static List<ApiResponse.PlaceInfoResponse> getPlaceInfoByCategory(String requestCategoryUrl) throws
+		JsonProcessingException {
+		String responseBody = httpGet(requestCategoryUrl);
 
-		try {
-			HttpResponse response = client.execute(getRequest);
+		if (StringUtils.isNotBlank(responseBody)) {
+			ObjectMapper objectMapper = new ObjectMapper();
+			ApiResponse apiResponse = objectMapper.readValue(responseBody, ApiResponse.class);
 
-			if (response.getStatusLine().getStatusCode() == 200) {
-				ResponseHandler<String> handler = new BasicResponseHandler();
-				String responseBody = handler.handleResponse(response);
-
-				ObjectMapper objectMapper = new ObjectMapper();
-				ApiResponse apiResponse = objectMapper.readValue(responseBody, ApiResponse.class);
-
-				return apiResponse.documents();
-			} else {
-				System.out.println("[API 호출 실패]\n 상태 코드: " + response.getStatusLine().getStatusCode());
-			}
-		} catch (Exception e) {
-			System.err.println("[API 호출 오류]: " + e);
+			return apiResponse.documents();
 		}
 		return new ArrayList<>();
 	}
 
-	private static double[] getCoordinateByKeyword(String requestKeywordUrl) {
+	// 키워드로 장소 검색하기
+	private static double[] getCoordinateByKeyword(String requestKeywordUrl) throws JsonProcessingException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		String responseBody = httpGet(requestKeywordUrl);
+
+		if (StringUtils.isNotBlank(responseBody)) {
+			JsonNode rootNode = objectMapper.readTree(responseBody);
+			JsonNode firstObject = rootNode.get("documents").get(0);
+
+			return new double[] {firstObject.get("x").asDouble(), firstObject.get("y").asDouble()};
+		}
+		return null;
+	}
+
+	// HttpClient, HttpGet 객체 생성
+	private static String httpGet(String requestUrl) {
 		HttpClient client = HttpClientBuilder.create().build();
-		HttpGet getRequest = new HttpGet(requestKeywordUrl);
+		HttpGet getRequest = new HttpGet(requestUrl);
 		getRequest.addHeader("Authorization", "KakaoAK " + REST_API_KEY);
 
 		try {
@@ -127,22 +146,13 @@ public class Main {
 
 			if (response.getStatusLine().getStatusCode() == 200) {
 				ResponseHandler<String> handler = new BasicResponseHandler();
-				String responseBody = handler.handleResponse(response);
-
-				ObjectMapper objectMapper = new ObjectMapper();
-				JsonNode rootNode = objectMapper.readTree(responseBody);
-
-				JsonNode firstObject = rootNode.get("documents").get(0);
-				double x = firstObject.get("x").asDouble();
-				double y = firstObject.get("y").asDouble();
-
-				return new double[] {x, y};
+				return handler.handleResponse(response);
 			} else {
 				System.out.println("[API 호출 실패]\n 상태 코드: " + response.getStatusLine().getStatusCode());
 			}
 		} catch (Exception e) {
 			System.err.println("[API 호출 오류]: " + e);
 		}
-		return null;
+		return "";
 	}
 }

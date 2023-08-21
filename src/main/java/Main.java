@@ -93,18 +93,26 @@ public class Main {
 
 	// 검색 결과 출력하기
 	private static void printPlaceInfo(String keyword, int radius, List<ApiResponse.PlaceInfoResponse> placeInfoList) {
-		System.out.println("입력한 위치 키워드: " + keyword);
-		System.out.println("검색 반경: " + String.format("%.1fkm", radius / 1000d) + System.lineSeparator());
+		StringBuilder sb = new StringBuilder();
+		sb.append("입력한 위치 키워드: ").append(keyword).append(System.lineSeparator());
+		sb.append("검색 반경: ")
+			.append(String.format("%.1fkm", radius / 1000d))
+			.append(System.lineSeparator())
+			.append(System.lineSeparator());
 
 		for (ApiResponse.PlaceInfoResponse placeInfo : placeInfoList) {
-			System.out.println("** 약국 검색 결과 **");
-			System.out.println("장소 URL(지도 위치): " + placeInfo.place_url());
-			System.out.println("상호명: " + placeInfo.place_name());
-			System.out.println("주소: " + placeInfo.address_name());
-			System.out.println("전화번호: " + placeInfo.phone());
-			System.out.println(
-				"거리(km): " + String.format("%.3fkm", placeInfo.distance() / 1000d) + System.lineSeparator());
+			sb.append("** 약국 검색 결과 **").append(System.lineSeparator());
+			sb.append("장소 URL(지도 위치): ").append(placeInfo.place_url()).append(System.lineSeparator());
+			sb.append("상호명: ").append(placeInfo.place_name()).append(System.lineSeparator());
+			sb.append("주소: ").append(placeInfo.address_name()).append(System.lineSeparator());
+			sb.append("전화번호: ").append(placeInfo.phone()).append(System.lineSeparator());
+			sb.append("거리(km): ")
+				.append(String.format("%.3fkm", placeInfo.distance() / 1000d))
+				.append(System.lineSeparator())
+				.append("----------------------------------------")
+				.append(System.lineSeparator());
 		}
+		System.out.println(sb);
 	}
 
 	// 카테고리로 장소 검색하기

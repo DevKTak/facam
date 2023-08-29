@@ -1,0 +1,26 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/book
+    username: devktak
+    password: password
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+book:
+  kakao:
+    restApiKey: 3d5113f27a487c01ac4500942161c28a
+    bookUrl: https://dapi.kakao.com/v3/search/book
+

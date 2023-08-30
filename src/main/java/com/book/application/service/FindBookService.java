@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FindBookService implements FindBookQuery {
 
@@ -35,7 +34,6 @@ public class FindBookService implements FindBookQuery {
 	private final BookRepository bookRepository;
 
 	@Override
-	@Transactional
 	public void findBooks(String query) {
 		String restApi = kakaoRestApi.getRestApi(properties.bookUrl(), query);
 
@@ -62,7 +60,7 @@ public class FindBookService implements FindBookQuery {
 
 			String isSave = scanner.nextLine();
 
-			saveBook(isSave, books);
+			saveBooks(isSave, books);
 		}
 	}
 
@@ -78,7 +76,7 @@ public class FindBookService implements FindBookQuery {
 	}
 
 	@Transactional
-	void saveBook(String isSave, List<Book> books) {
+	void saveBooks(String isSave, List<Book> books) {
 		if (isSave.equals("Y")) {
 			List<Book> result = bookRepository.saveAll(books);
 

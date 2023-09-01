@@ -23,9 +23,20 @@ import dto.ApiResponse;
 public class Main {
 
 	private static final String REST_API_KEY = "3d5113f27a487c01ac4500942161c28a";
-	private static final String KAKAO_SEARCH_URL = "https://dapi.kakao.com/v2/local/search";
+	private static final String KAKAO_SEARCH_BASE_URL = "https://dapi.kakao.com/v2/local/search";
 	private static final String CATEGORY_GROUP_CODE = "PM9";
 	private static final int size = 10;
+
+	private static String buildUrlAndQueryStringByKeyword(final String keyword) {
+		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+		return KAKAO_SEARCH_BASE_URL + "/keyword.json?query=" + encodedKeyword;
+	}
+
+	private static String buildUrlAndQueryStringByCategory(double[] coordinate, int radius) {
+		return KAKAO_SEARCH_BASE_URL + "/category.json?category_group_code=" + CATEGORY_GROUP_CODE
+			+ "&x=" + coordinate[0] + "&y=" + coordinate[1]
+			+ "&radius=" + radius + "&size=" + size;
+	}
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -36,19 +47,15 @@ public class Main {
 		System.out.print("검색 반경을 입력하세요(1000:1km): ");
 		int radius = Integer.parseInt(br.readLine());
 
-		System.out.println();
+		System.out.print(System.lineSeparator());
 
-		String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
-		String requestKeywordUrl = KAKAO_SEARCH_URL + "/keyword.json?query=" + encodedKeyword;
+		String requestKeywordUrl = buildUrlAndQueryStringByKeyword(keyword);
 
 		// 키워드로 장소 검색해서 위도와 경도 얻기
 		double[] coordinate = getCoordinateByKeyword(requestKeywordUrl);
 
 		if (coordinate != null) {
-			String requestCategoryUrl =
-				KAKAO_SEARCH_URL + "/category.json?category_group_code=" + CATEGORY_GROUP_CODE + "&x=" + coordinate[0]
-					+ "&y=" + coordinate[1]
-					+ "&radius=" + radius + "&size=" + size;
+			String requestCategoryUrl = buildUrlAndQueryStringByCategory(coordinate, radius);
 
 			// 카테고리로 장소 검색해서 약국 정보 리스트 10개 얻기
 			List<ApiResponse.PlaceInfoResponse> placeInfoList = getPlaceInfoByCategory(requestCategoryUrl);

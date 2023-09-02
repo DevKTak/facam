@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FindBookService implements FindBookQuery {
 
 	@Qualifier("kakaoRestApi")
@@ -33,18 +34,21 @@ public class FindBookService implements FindBookQuery {
 
 	private final BookRepository bookRepository;
 
+	private final ObjectMapper objectMapper;
+
 	@Override
-	public void findBooks(String query) {
-		String restApi = kakaoRestApi.getRestApi(properties.bookUrl(), query);
+	@Transactional
+	public void searchBooks() {
+		System.out.print("도서를 검색할 제목을 입력하세요: ");
+		String restApi = kakaoRestApi.getRestApi(properties.bookUrl(), "query=" + scanner.nextLine());
 
 		if (StringUtils.isNotBlank(restApi)) {
-			ObjectMapper objectMapper = new ObjectMapper();
 			ApiResponse apiResponse;
 
 			try {
 				apiResponse = objectMapper.readValue(restApi, ApiResponse.class);
-			} catch (JsonProcessingException jsonProcessingException) {
-				throw new RuntimeException("JSON processing error occurred", jsonProcessingException);
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException("JSON processing error occurred", e);
 			}
 
 			List<Book> books = new ArrayList<>();
@@ -59,7 +63,13 @@ public class FindBookService implements FindBookQuery {
 			System.out.print("데이터베이스에 저장하시겠습니까? (Y | N) ");
 
 			if ("Y".equals(scanner.nextLine())) {
-				saveBooks(books);
+				List<Book> result = saveBooks(books);
+
+				if (result.size() == books.size()) {
+					System.out.println("저장 성공");
+
+					findBooks();
+				}
 			}
 		}
 	}
@@ -77,20 +87,18 @@ public class FindBookService implements FindBookQuery {
 	}
 
 	@Transactional
-	void saveBooks(List<Book> books) {
-		List<Book> result = bookRepository.saveAll(books);
+	public List<Book> saveBooks(List<Book> books) {
+		return bookRepository.saveAll(books);
+	}
 
-		if (result.size() == books.size()) {
-			System.out.println("저장 성공");
+	public void findBooks() {
+		List<Book> findBooks = bookRepository.findByOrderByTitleAsc();
 
-			List<Book> findBooks = bookRepository.findByOrderByTitleAsc();
+		findBooks.stream().forEach(book -> {
+			ApiResponse.BookResponse bookResponse = new ApiResponse.BookResponse(book.getTitle(),
+				book.getPrice(), book.getPublisher(), book.getAuthors(), book.getSalePrice(), book.getIsbn());
 
-			findBooks.stream().forEach(book -> {
-				ApiResponse.BookResponse bookResponse = new ApiResponse.BookResponse(book.getTitle(),
-					book.getPrice(), book.getPublisher(), book.getAuthors(), book.getSalePrice(), book.getIsbn());
-
-				printBooks(bookResponse);
-			});
-		}
+			printBooks(bookResponse);
+		});
 	}
 }

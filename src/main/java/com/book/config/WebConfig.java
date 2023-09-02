@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Configuration
 public class WebConfig {
 
@@ -17,5 +19,10 @@ public class WebConfig {
 	@Bean
 	public Scanner scanner() {
 		return new Scanner(System.in);
+	}
+
+	@Bean
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper();
 	}
 }

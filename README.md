@@ -1,3 +1,11 @@
+## 접속 URL: http://localhost:8080/api/books
+
+## DB 정보
+url: jdbc:mysql://127.0.0.1:3306/book
+username: devktak
+password: password
+
+
 # 과제2 : 책 검색 및 데이터베이스 Java 애플리케이션 개발
 
 이 프로그램은 Kakao Book Open API를 활용하여 책을 검색하고, 검색한 책 데이터를 데이터베이스에 저장하는 기능을 제공합니다.

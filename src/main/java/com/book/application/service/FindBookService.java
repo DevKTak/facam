@@ -58,14 +58,15 @@ public class FindBookService implements FindBookQuery {
 			);
 			System.out.print("데이터베이스에 저장하시겠습니까? (Y | N) ");
 
-			String isSave = scanner.nextLine();
-
-			saveBooks(isSave, books);
+			if ("Y".equals(scanner.nextLine())) {
+				saveBooks(books);
+			}
 		}
 	}
 
 	private void printBooks(ApiResponse.BookResponse bookInfo) {
 		StringBuilder sb = new StringBuilder();
+
 		sb.append("도서 제목: ").append(bookInfo.title()).append(" | ")
 			.append("가격: ").append(bookInfo.price()).append(" | ")
 			.append("출판사: ").append(bookInfo.publisher()).append(" | ")
@@ -76,21 +77,20 @@ public class FindBookService implements FindBookQuery {
 	}
 
 	@Transactional
-	void saveBooks(String isSave, List<Book> books) {
-		if (isSave.equals("Y")) {
-			List<Book> result = bookRepository.saveAll(books);
+	void saveBooks(List<Book> books) {
+		List<Book> result = bookRepository.saveAll(books);
 
-			if (result.size() == books.size()) {
-				System.out.println("저장 성공");
+		if (result.size() == books.size()) {
+			System.out.println("저장 성공");
 
-				List<Book> findBooks = bookRepository.findByOrderByTitleAsc();
-				findBooks.stream().forEach(book -> {
-					ApiResponse.BookResponse bookResponse = new ApiResponse.BookResponse(book.getTitle(),
-						book.getPrice(), book.getPublisher(), book.getAuthors(), book.getSalePrice(), book.getIsbn());
+			List<Book> findBooks = bookRepository.findByOrderByTitleAsc();
 
-					printBooks(bookResponse);
-				});
-			}
+			findBooks.stream().forEach(book -> {
+				ApiResponse.BookResponse bookResponse = new ApiResponse.BookResponse(book.getTitle(),
+					book.getPrice(), book.getPublisher(), book.getAuthors(), book.getSalePrice(), book.getIsbn());
+
+				printBooks(bookResponse);
+			});
 		}
 	}
 }

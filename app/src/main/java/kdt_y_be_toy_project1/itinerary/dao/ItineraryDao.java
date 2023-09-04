@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ItineraryDao {
   List<Itinerary> getItineraryListFromFile(int tripId);
-  Itinerary getItineraryFromFile(int tripId);
+  Itinerary getItineraryFromFile(int tripId, int itineraryId);
 
   // 파일이 없으면 만들어서 여정을 넣고
   // 피일이 있으면 여정을 추가해서 파일에 추가한다

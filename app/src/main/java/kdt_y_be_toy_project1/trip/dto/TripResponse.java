@@ -1,14 +1,17 @@
 package kdt_y_be_toy_project1.trip.dto;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Builder
+@Setter
 @Getter
+@NoArgsConstructor
 public class TripResponse {
-	long tripId;
-	String tripName;
-	String startDate;
-	String endDate;
-	long itineraryCount;
+	private long tripId;
+	private String tripName;
+	private String startDate;
+	private String endDate;
+	private long itineraryCount;
+	
 }

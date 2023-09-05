@@ -16,11 +16,16 @@ repositories {
 }
 
 dependencies {
+	//json
     implementation 'org.json:json:20230618'
+    //openCsv
+    implementation 'com.opencsv:opencsv:5.5'
+    
     compileOnly 'org.projectlombok:lombok:1.18.28'
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

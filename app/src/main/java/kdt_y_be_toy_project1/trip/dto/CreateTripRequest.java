@@ -6,8 +6,8 @@ import lombok.Getter;
 @Builder
 @Getter
 public class CreateTripRequest {
-	long tripId;
-	String tripName;
-	String startDate;
-	String endDate;
+	private long tripId;
+	private String tripName;
+	private String startDate;
+	private String endDate;
 }

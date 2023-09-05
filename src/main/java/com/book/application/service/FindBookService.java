@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class FindBookService implements FindBookQuery {
 
-	@Qualifier("kakaoRestApi")
 	private final RestApi kakaoRestApi;
 
 	private final BookConfigurationProperties properties;

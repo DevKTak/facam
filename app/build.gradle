@@ -19,6 +19,7 @@ dependencies {
     implementation 'org.json:json:20230618'
     compileOnly 'org.projectlombok:lombok:1.18.28'
     // Use JUnit Jupiter for testing.
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

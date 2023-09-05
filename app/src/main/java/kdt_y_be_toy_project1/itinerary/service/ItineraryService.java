@@ -11,8 +11,8 @@ import static kdt_y_be_toy_project1.itinerary.type.FileType.JSON;
 
 public class ItineraryService {
 
-  private ItineraryJSONDao jsonDao = new ItineraryJSONDao();
-  private ItineraryCSVDao csvDao = new ItineraryCSVDao();
+  private final ItineraryJSONDao jsonDao = new ItineraryJSONDao();
+  private final ItineraryCSVDao csvDao = new ItineraryCSVDao();
 
   List<Itinerary> getAllItineraryList(int tripId, FileType type) {
     // fileApi를 통해 Itinerary 객체 리스트를 받아온다

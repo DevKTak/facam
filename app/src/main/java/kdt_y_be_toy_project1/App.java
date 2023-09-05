@@ -20,4 +20,5 @@ public class App {
             appConsole.processInput(sc.nextLine());
         }
     }
+    
 }

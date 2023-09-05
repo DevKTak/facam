@@ -11,7 +11,7 @@ public class ItineraryJSONDao implements ItineraryDao {
   }
 
   @Override
-  public Itinerary getItineraryFromFile(int tripId) {
+  public Itinerary getItineraryFromFile(int tripId, int itineraryId) {
     return null;
   }
 

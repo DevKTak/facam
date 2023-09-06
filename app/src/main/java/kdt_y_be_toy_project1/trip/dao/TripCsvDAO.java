@@ -2,10 +2,10 @@ package kdt_y_be_toy_project1.trip.dao;
 
 import kdt_y_be_toy_project1.trip.domain.Trip;
 
-public class TripJsonDao implements TripDao {
+public class TripCsvDAO implements TripDAO {
 
 	@Override
-	public void save(Trip trip) {
+	public void save(Long tripId, String jsonTrip) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -6,7 +6,7 @@ import kdt_y_be_toy_project1.trip.dto.TripResponse;
 public class TripCsvService implements TripService{
 
 	@Override
-	public void save(CreateTripRequest trip) {
+	public void save(CreateTripRequest tripRequestDto) {
 		// TODO Auto-generated method stub
 		
 	}

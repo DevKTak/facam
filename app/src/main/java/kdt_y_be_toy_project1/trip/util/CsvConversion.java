@@ -17,19 +17,19 @@ import kdt_y_be_toy_project1.trip.dto.TripResponse;
 
 public class CsvConversion{
 
-	
+
 	private String path=System.getProperty("user.dir")+"/src/main/resources/format/";
-	
+
 	/**
 	 * Path resourcePath = Path.of(Objects.requireNonNull(this.getClass().getResource(BASE_PATH)).toURI())
             .toAbsolutePath();
 	 */
 	public void convertToCsv(CreateTripRequest createTripRequest){
-		
+
 		if(createTripRequest!=null) {
 			//trip fts후, maxId +1 해서 저장하기
-			String filename=path+"trip_"+createTripRequest.getTripId()+".csv";
-		
+			String filename=path+"trip_"+/*createTripRequest.getTripId()+*/".csv";
+
 			try(CSVWriter writer = new CSVWriter(new FileWriter(filename))){
 				ArrayList<String> attributes=new ArrayList<String>();
  				ArrayList<String> tuple=new ArrayList<String>();
@@ -53,16 +53,16 @@ public class CsvConversion{
 		else {
 			throw new RuntimeException("여행 정보가 올바르게 입력되지 않았습니다.");
 		}
-		
+
 		//createTripReqeust가 변경됐을 때, 너무 의존적이다.
 	}
-	
-	
+
+
 	public List<TripResponse> convertToTrip(){
 		List<TripResponse> tripResponses=new ArrayList<TripResponse>();
  		String[] line;
 		File dir=new File(path);
-		
+
 		if(dir!=null && dir.length()!=0) {
 			for(String fileName:dir.list()) {
 				if(fileName.startsWith("trip_") && fileName.endsWith(".csv")) {
@@ -72,7 +72,7 @@ public class CsvConversion{
 						            .build()
 						            .parse();
 						tripResponses.addAll(tripResponse);
-	
+
 						//id로 조회 itineraies
 						//csv 줄수 보고 count 넣어서 return;
 						long findTripId=tripResponse.get(0).getTripId();
@@ -95,15 +95,15 @@ public class CsvConversion{
 					catch(IOException e) {
 						e.printStackTrace();
 						throw new RuntimeException(path+fileName+":해당 파일을 찾을 수 없습니다.");
-					}		
-				}		
+					}
+				}
 			}
 		}
 		else {
 			throw new RuntimeException("여행 기록이 존재하지 않습니다.");
 		}
-		
+
 		return tripResponses;
 	}
-	
+
 }

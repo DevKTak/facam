@@ -6,7 +6,7 @@ import kdt_y_be_toy_project1.trip.dto.TripResponse;
 
 public interface TripService {
 
-	void save(CreateTripRequest trip);
+	void save(CreateTripRequest tripRequestDto);
 	
 	TripResponse findAll();
 }

@@ -52,10 +52,10 @@ class ItineraryCSVDaoTest {
   @AfterAll
   static void afterAll() {
     // 임시로 경로 설정
-    String testFilePathStr = "out/test/resources/itinerary/csv/itineraries_trip_1.csv";
+    String testFilePathStr = "out/production/resources/itinerary/csv/itineraries_trip_1.csv";
 
     try {
-      Files.delete(Path.of(testFilePathStr).toAbsolutePath());
+      Files.delete(Path.of(testFilePathStr));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

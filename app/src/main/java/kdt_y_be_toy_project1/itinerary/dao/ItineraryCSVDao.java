@@ -5,20 +5,15 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvException;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
+import kdt_y_be_toy_project1.common.data.ItineraryDataFile;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import static kdt_y_be_toy_project1.itinerary.type.FileType.CSV;
 
 public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
-  private static final String BASE_PATH = "/itinerary";
-  private static final String BASE_NAME = "itineraries_trip_";
-  private static final String FORMAT = "csv";
-
   @Override
   public List<ItineraryCSV> getItineraryListFromFile(int tripId) {
     if (tripId < 1) {
@@ -27,7 +22,7 @@ public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
 
     List<ItineraryCSV> itineraries;
 
-    File file = new File(getItineraryFilePathString(tripId));
+    File file = new ItineraryDataFile().getDataFile(tripId, CSV);
     try {
       if (file.createNewFile()) {
         itineraries = new ArrayList<>();
@@ -59,24 +54,11 @@ public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
     itineraryCSV.setItineraryId(itineraries.size() + 1);
     itineraries.add(itineraryCSV);
 
-    File file = new File(getItineraryFilePathString(tripId));
+    File file = new ItineraryDataFile().getDataFile(tripId, CSV);
     try (Writer bufferedWriter = new BufferedWriter(new FileWriter(file))) {
       StatefulBeanToCsv<ItineraryCSV> beanToCsv = new StatefulBeanToCsvBuilder<ItineraryCSV>(bufferedWriter).build();
       beanToCsv.write(itineraries);
     } catch (IOException | CsvException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  public String getItineraryFilePathString(int tripId) {
-    try {
-      Path resourcePath = Path.of(Objects.requireNonNull(this.getClass().getResource(BASE_PATH)).toURI())
-            .toAbsolutePath();
-      Path basePath = resourcePath.resolve(FORMAT);
-      Files.createDirectories(basePath);
-
-      return basePath.resolve(BASE_NAME + tripId + "." + FORMAT).toString();
-    } catch (URISyntaxException | IOException e) {
       throw new RuntimeException(e);
     }
   }

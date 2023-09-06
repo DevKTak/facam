@@ -4,6 +4,7 @@ package kdt_y_be_toy_project1.view;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import lombok.Getter;
 
 public class AppConsole {
 
@@ -21,13 +22,13 @@ public class AppConsole {
     private static final String SAVE_TRIP_DISPLAY = """
         ==========================================================
                         #    여행기록 메뉴    #
-        ==========================================================                           
+        ==========================================================
         """;
     private static final String INSERT_ARGUMENT_DISPLAY = "%s을 입력하세요:\t";
     private static final String INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY = "입력 포맷(yyyy-mm-dd)을 지켜주세요. (예: 2023-09-05)";
     private static final String ASK_FOR_SAVE_DISPLAY = "저장하시겠습니까?(Y/N):\t";
 
-    private boolean shutdown;
+    @Getter private boolean shutdown;
     private Processor processor;
     private TextOutput output;
 
@@ -61,7 +62,7 @@ public class AppConsole {
         return input -> {
             try {
                 LocalDate startDate = parseInputToLocalDate(input);
-                return getInsertTripEndDateProcessor(new TripRequestDto(null, startDate, null));
+                return getInsertTripEndDateProcessor(new TripCreateRequest(null, startDate, null));
             } catch (DateTimeParseException e) {
                 output.println(INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY);
                 return getInsertTripStartDateProcessor();
@@ -74,38 +75,38 @@ public class AppConsole {
         return LocalDate.parse(input, dateTimeFormatter);
     }
 
-    private Processor getInsertTripEndDateProcessor(TripRequestDto tripRequestDto) {
+    private Processor getInsertTripEndDateProcessor(TripCreateRequest tripCreateRequest) {
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("종료일(yyyy-mm-dd)"));
-        LocalDate startDate = tripRequestDto.startDate();
+        LocalDate startDate = tripCreateRequest.startDate();
         return input -> {
             try {
                 LocalDate endDate = parseInputToLocalDate(input);
 
                 if (endDate.isBefore(startDate)) {
                     output.println("종료일은 시작일보다 빠를 수 없습니다.");
-                    return getInsertTripEndDateProcessor(tripRequestDto);
+                    return getInsertTripEndDateProcessor(tripCreateRequest);
                 }
 
-                return getInsertTripNameProcessor(new TripRequestDto(null, startDate, endDate));
+                return getInsertTripNameProcessor(new TripCreateRequest(null, startDate, endDate));
             } catch (DateTimeParseException e) {
                 output.println(INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY);
-                return getInsertTripEndDateProcessor(tripRequestDto);
+                return getInsertTripEndDateProcessor(tripCreateRequest);
             }
         };
     }
 
-    private Processor getInsertTripNameProcessor(TripRequestDto tripRequestDto) {
+    private Processor getInsertTripNameProcessor(TripCreateRequest tripCreateRequest) {
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("여행명"));
         return input -> {
-            TripRequestDto result = new TripRequestDto(input, tripRequestDto.startDate(),
-                tripRequestDto.endDate());
+            TripCreateRequest result = new TripCreateRequest(input, tripCreateRequest.startDate(),
+                tripCreateRequest.endDate());
 
             return getSaveTripProcessor(result);
         };
     }
 
-    private Processor getSaveTripProcessor(TripRequestDto tripRequestDto) {
-        output.println(tripRequestDto.toString());
+    private Processor getSaveTripProcessor(TripCreateRequest tripCreateRequest) {
+        output.println(tripCreateRequest.toString());
         output.print(ASK_FOR_SAVE_DISPLAY);
         return input -> {
             switch (input.toLowerCase()) {
@@ -119,10 +120,9 @@ public class AppConsole {
                 }
                 default -> {
                     output.print("'Y' 또는 'N' 만 입력해주세요");
-                    return getSaveTripProcessor(tripRequestDto);
+                    return getSaveTripProcessor(tripCreateRequest);
                 }
             }
-
         };
     }
 
@@ -158,10 +158,6 @@ public class AppConsole {
 
     public String flush() {
         return output.flush();
-    }
-
-    public boolean isShutdown() {
-        return shutdown;
     }
 
     private void shutdownApp() {

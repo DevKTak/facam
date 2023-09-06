@@ -94,7 +94,7 @@ class AppConsoleTest {
             String saveTripProcessDisplay = """
                 ==========================================================
                                 #    여행기록 메뉴    #
-                ==========================================================                           
+                ==========================================================
                 """;
 
             AppConsole appConsole = new AppConsole();
@@ -106,6 +106,20 @@ class AppConsoleTest {
 
             // then
             assertThat(displayMessage).contains(saveTripProcessDisplay);
+        }
+
+        @DisplayName("5번을 입력하면 shutdown이 된다.")
+        @Test
+        void input5_shutdownStatus_isTrue() {
+            // given
+            AppConsole appConsole = new AppConsole();
+
+            // when
+            appConsole.processInput("5");
+            boolean isComplete = appConsole.isShutdown();
+
+            // then
+            assertThat(isComplete).isTrue();
         }
     }
 

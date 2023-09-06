@@ -123,7 +123,7 @@ public class AppConsole {
                 }
             }
 
-            return getInsertItineraryProcessor();
+            //return getInsertItineraryProcessor();
         };
     }
 

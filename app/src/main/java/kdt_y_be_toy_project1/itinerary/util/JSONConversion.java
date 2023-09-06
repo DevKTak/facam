@@ -1,12 +1,12 @@
 package kdt_y_be_toy_project1.itinerary.util;
 
-import kdt_y_be_toy_project1.itinerary.entity.Itinerary;
+import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
 import org.json.JSONObject;
 
 public class JSONConversion {
 
   //obj 반환값 생각하기
-  static String objToJson(Itinerary itinerary) {
+  static String objToJson(ItineraryJSON itinerary) {
 
     if(itinerary == null){
       throw new NullPointerException("Itinerary is null");
@@ -22,13 +22,13 @@ public class JSONConversion {
     return jsonObject.toString();
   }
 
-  static Itinerary jsonToObj(JSONObject jsonObject) {
+  static ItineraryJSON jsonToObj(JSONObject jsonObject) {
 
     if(jsonObject == null){
       throw new NullPointerException("JSONObject is null");
     }
 
-    return Itinerary.builder()
+    return ItineraryJSON.builder()
             .departurePlace(jsonObject.getString("departurePlace"))
             .destination(jsonObject.getString("destination"))
             .departureTime(jsonObject.getString("departureTime"))

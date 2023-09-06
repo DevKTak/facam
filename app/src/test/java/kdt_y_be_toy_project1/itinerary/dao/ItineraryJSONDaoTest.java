@@ -1,13 +1,10 @@
 package kdt_y_be_toy_project1.itinerary.dao;
 
-import kdt_y_be_toy_project1.itinerary.entity.Itinerary;
-import org.junit.jupiter.api.DisplayName;
+import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ItineraryJSONDaoTest {
 
@@ -27,7 +24,7 @@ class ItineraryJSONDaoTest {
         int tripId = Integer.MAX_VALUE;
         ItineraryJSONDao itineraryJSONDao = new ItineraryJSONDao();
 
-        Itinerary itinerary = Itinerary.builder()
+        ItineraryJSON itinerary = ItineraryJSON.builder()
                 .departurePlace("City Test")
                 .destination("City Test")
                 .departureTime("2023-08-15T08:00:00")
@@ -52,7 +49,7 @@ class ItineraryJSONDaoTest {
     @Test
     void 마지막으로_추가된_여정파일의_인덱스가_일치하는지() {
 
-        Itinerary itinerary = Itinerary.builder()
+        ItineraryJSON itinerary = ItineraryJSON.builder()
                 .departurePlace("City Test")
                 .destination("City Test")
                 .departureTime("2023-08-15T08:00:00")

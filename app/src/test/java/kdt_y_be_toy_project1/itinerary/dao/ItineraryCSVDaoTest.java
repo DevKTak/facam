@@ -1,6 +1,6 @@
 package kdt_y_be_toy_project1.itinerary.dao;
 
-import kdt_y_be_toy_project1.itinerary.entity.Itinerary;
+import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
@@ -19,8 +19,8 @@ class ItineraryCSVDaoTest {
   @Test
   void shouldGetItineraryListFromFile() {
     int tripId = 1;
-    String expected = "[Itinerary(itineraryId=1, departurePlace=City X, destination=City Y, departureTime=2023-08-15T08:00:00, arrivalTime=2023-08-15T10:00:00, checkIn=2023-08-15T12:00:00, checkOut=2023-08-30T10:00:00)]";
-    List<Itinerary> itineraries = dao.getItineraryListFromFile(tripId);
+    String expected = "[ItineraryCSV(itineraryId=1, departurePlace=City X, destination=City Y, departureTime=2023-08-15T08:00:00, arrivalTime=2023-08-15T10:00:00, checkIn=2023-08-15T12:00:00, checkOut=2023-08-30T10:00:00)]";
+    List<ItineraryCSV> itineraries = dao.getItineraryListFromFile(tripId);
     assertEquals(expected, Arrays.toString(itineraries.toArray()));
   }
 
@@ -28,15 +28,15 @@ class ItineraryCSVDaoTest {
   void shouldGetItineraryFromFile() {
     int tripId = 1;
     int itineraryId = 1;
-    String expected = "Itinerary(itineraryId=1, departurePlace=City X, destination=City Y, departureTime=2023-08-15T08:00:00, arrivalTime=2023-08-15T10:00:00, checkIn=2023-08-15T12:00:00, checkOut=2023-08-30T10:00:00)";
-    Itinerary itinerary = dao.getItineraryFromFile(tripId, itineraryId);
-    assertEquals(expected, itinerary.toString());
+    String expected = "ItineraryCSV(itineraryId=1, departurePlace=City X, destination=City Y, departureTime=2023-08-15T08:00:00, arrivalTime=2023-08-15T10:00:00, checkIn=2023-08-15T12:00:00, checkOut=2023-08-30T10:00:00)";
+    ItineraryCSV itineraryCSV = dao.getItineraryFromFile(tripId, itineraryId);
+    assertEquals(expected, itineraryCSV.toString());
   }
 
   @Test
   void shouldAddItineraryToFile() {
     int tripId = 1;
-    Itinerary itinerary = Itinerary.builder()
+    ItineraryCSV itineraryCSV = ItineraryCSV.builder()
         .departurePlace("City X")
         .destination("City Y")
         .departureTime("2023-08-15T08:00:00")
@@ -44,9 +44,9 @@ class ItineraryCSVDaoTest {
         .checkIn("2023-08-15T12:00:00")
         .checkOut("2023-08-30T10:00:00")
         .build();
-    dao.addItineraryToFile(1, itinerary);
-    List<Itinerary> itineraries = dao.getItineraryListFromFile(tripId);
-    assertEquals(itineraries.get(itineraries.size() - 1), itinerary);
+    dao.addItineraryToFile(1, itineraryCSV);
+    List<ItineraryCSV> itineraries = dao.getItineraryListFromFile(tripId);
+    assertEquals(itineraries.get(itineraries.size() - 1), itineraryCSV);
   }
 
   @AfterAll

@@ -4,7 +4,7 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvException;
-import kdt_y_be_toy_project1.itinerary.entity.Itinerary;
+import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -14,18 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ItineraryCSVDao implements ItineraryDao {
+public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
   private static final String BASE_PATH = "/itinerary";
   private static final String BASE_NAME = "itineraries_trip_";
   private static final String FORMAT = "csv";
 
   @Override
-  public List<Itinerary> getItineraryListFromFile(int tripId) {
+  public List<ItineraryCSV> getItineraryListFromFile(int tripId) {
     if (tripId < 1) {
       throw new RuntimeException("tripId must be greater than 1");
     }
 
-    List<Itinerary> itineraries = null;
+    List<ItineraryCSV> itineraries = null;
 
     File file = new File(getItineraryFilePathString(tripId));
     try {
@@ -33,8 +33,8 @@ public class ItineraryCSVDao implements ItineraryDao {
         itineraries = new ArrayList<>();
       } else {
         Reader bufferedReader = new BufferedReader(new FileReader(file));
-        itineraries = new CsvToBeanBuilder<Itinerary>(bufferedReader)
-            .withType(Itinerary.class)
+        itineraries = new CsvToBeanBuilder<ItineraryCSV>(bufferedReader)
+            .withType(ItineraryCSV.class)
             .build()
             .parse();
         bufferedReader.close();
@@ -46,22 +46,22 @@ public class ItineraryCSVDao implements ItineraryDao {
   }
 
   @Override
-  public Itinerary getItineraryFromFile(int tripId, int itineraryId) {
-    List<Itinerary> itineraries = getItineraryListFromFile(tripId);
+  public ItineraryCSV getItineraryFromFile(int tripId, int itineraryId) {
+    List<ItineraryCSV> itineraries = getItineraryListFromFile(tripId);
     return itineraries.stream()
         .filter(it -> it.getItineraryId() == itineraryId)
         .findFirst().orElse(null);
   }
 
   @Override
-  public void addItineraryToFile(int tripId, Itinerary itinerary) {
-    List<Itinerary> itineraries = getItineraryListFromFile(tripId);
-    itinerary.setItineraryId(itineraries.size() + 1);
-    itineraries.add(itinerary);
+  public void addItineraryToFile(int tripId, ItineraryCSV itineraryCSV) {
+    List<ItineraryCSV> itineraries = getItineraryListFromFile(tripId);
+    itineraryCSV.setItineraryId(itineraries.size() + 1);
+    itineraries.add(itineraryCSV);
 
     File file = new File(getItineraryFilePathString(tripId));
     try (Writer bufferedWriter = new BufferedWriter(new FileWriter(file))) {
-      StatefulBeanToCsv<Itinerary> beanToCsv = new StatefulBeanToCsvBuilder<Itinerary>(bufferedWriter).build();
+      StatefulBeanToCsv<ItineraryCSV> beanToCsv = new StatefulBeanToCsvBuilder<ItineraryCSV>(bufferedWriter).build();
       beanToCsv.write(itineraries);
     } catch (IOException | CsvException e) {
       throw new RuntimeException(e);

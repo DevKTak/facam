@@ -9,6 +9,7 @@ import kdt_y_be_toy_project1.itinerary.entity.Itinerary;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class ItineraryJSONDao implements ItineraryDao {
     private static final String FORMAT = ".json";
 
     @Override
-    public List<Itinerary> getItineraryListFromFile(int tripId) {
+    public List<ItineraryJSON> getItineraryListFromFile(int tripId) {
 
       if (tripId < 1) {
         throw new RuntimeException("tripId must be greater than 1");
@@ -51,7 +52,7 @@ public class ItineraryJSONDao implements ItineraryDao {
     }
 
     @Override
-    public Itinerary getItineraryFromFile(int tripId, int itineraryId) {
+    public ItineraryJSON getItineraryFromFile(int tripId, int itineraryId) {
 
         List<Itinerary> list = getItineraryListFromFile(tripId);
         return list.stream()
@@ -61,7 +62,7 @@ public class ItineraryJSONDao implements ItineraryDao {
 
 
     @Override
-    public void addItineraryToFile(int tripId, Itinerary itinerary) {
+    public void addItineraryToFile(int tripId, ItineraryJSON itinerary) {
       List<Itinerary> itineraries = getItineraryListFromFile(tripId);
       itinerary.setItineraryId(itineraries.size() + 1);
       itineraries.add(itinerary);

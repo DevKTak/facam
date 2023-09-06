@@ -16,17 +16,13 @@ repositories {
 }
 
 dependencies {
-	//json
-    implementation 'org.json:json:20230618'
-    //openCsv
-    implementation 'com.opencsv:opencsv:5.5'
-    
+    implementation 'com.opencsv:opencsv:5.8'
+    implementation 'com.google.code.gson:gson:2.10.1'
     compileOnly 'org.projectlombok:lombok:1.18.28'
     // Use JUnit Jupiter for testing.
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
 }
 

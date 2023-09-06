@@ -4,6 +4,9 @@ import kdt_y_be_toy_project1.itinerary.entity.Itinerary;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ItineraryJSONDaoTest {
@@ -11,40 +14,60 @@ class ItineraryJSONDaoTest {
     @Test
     void getItineraryListFromFile() {
 
-        int tripId = 1;
+        int tripId = 2;
         ItineraryJSONDao itineraryJSONDao = new ItineraryJSONDao();
 
         var list = itineraryJSONDao.getItineraryListFromFile(tripId);
 
-        System.out.println("list = " + list);
-        assertNotNull(list);
 
     }
 
     @Test
-    void testGetItineraryListFromFile() {
+    void 존재하지_않는_여행파일에_여정을_추가한경우(){
+        int tripId = Integer.MAX_VALUE;
+        ItineraryJSONDao itineraryJSONDao = new ItineraryJSONDao();
+
+        Itinerary itinerary = Itinerary.builder()
+                .departurePlace("City Test")
+                .destination("City Test")
+                .departureTime("2023-08-15T08:00:00")
+                .arrivalTime("2023-08-15T10:00:00")
+                .checkIn("2023-08-15T12:00:00")
+                .checkOut("2023-08-30T10:00:00")
+                .build();
+
+        assertThrows(NullPointerException.class, () -> {
+            itineraryJSONDao.addItineraryToFile(tripId, itinerary);
+        });
+
     }
 
     @Test
-    void getItineraryFromFile() {
+    void 원하는_인덱스의_여정을_가져오기() {
         int tripId = 1;
         ItineraryJSONDao itineraryJSONDao = new ItineraryJSONDao();
 
-        var itinerary = itineraryJSONDao.getItineraryFromFile(tripId, 1);
-
-        System.out.println("itinerary = " + itinerary);
     }
 
     @Test
-    void addItineraryToFile() {
+    void 마지막으로_추가된_여정파일의_인덱스가_일치하는지() {
 
-        var a = Itinerary.builder().itineraryId(4)
-                .destination("123").departurePlace("123").departureTime("123").arrivalTime("123")
-                .checkOut("123").checkIn("123").departurePlace("123").build();
+        Itinerary itinerary = Itinerary.builder()
+                .departurePlace("City Test")
+                .destination("City Test")
+                .departureTime("2023-08-15T08:00:00")
+                .arrivalTime("2023-08-15T10:00:00")
+                .checkIn("2023-08-15T12:00:00")
+                .checkOut("2023-08-30T10:00:00")
+                .build();
+
+        int tripId = 1;
         ItineraryJSONDao itineraryJSONDao = new ItineraryJSONDao();
+        itineraryJSONDao.addItineraryToFile(1, itinerary);
+        var list = itineraryJSONDao.getItineraryListFromFile(tripId);
 
-        itineraryJSONDao.addItineraryToFile(1, a);
-
+       
+        assertEquals(list.get(list.size()-1).getItineraryId(), itinerary.getItineraryId());
 
     }
 }

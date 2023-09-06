@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import kdt_y_be_toy_project1.itinerary.entity.Itinerary;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
@@ -22,52 +23,59 @@ public class ItineraryJSONDao implements ItineraryDao {
     private static final String FORMAT = ".json";
 
     @Override
-    public List<Itinerary> getItineraryListFromFile(int tripId) { //json파일에서 여정을 읽어옴, List로 만들어서 반환
-        String filename = getItineraryFilePathString(tripId);
+    public List<Itinerary> getItineraryListFromFile(int tripId) {
 
-        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-        List<Itinerary> list = new ArrayList<>();
+      if (tripId < 1) {
+        throw new RuntimeException("tripId must be greater than 1");
+      }
+      List<Itinerary> itineraries = null;
 
-        try {
-            String jsonContent = readFileAsString(filename);
-            list = gson.fromJson(jsonContent, new TypeToken<List<Itinerary>>() {
-            }.getType());
+      File file = new File(getItineraryFilePathString(tripId));
+      Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
-        } catch (IOException e) {
-            e.printStackTrace();
+      try {
+
+          file.createNewFile();
+          if(file.createNewFile()){
+
+              itineraries = new ArrayList<>();
+          } else{
+              Reader bufferedReader = new BufferedReader(new FileReader(file));
+//              String jsonContent = readFileAsString(filename);
+              itineraries = gson.fromJson(bufferedReader, new TypeToken<List<Itinerary>>() {}.getType());
         }
-        return list;
+        } catch (IOException | NullPointerException e) {
+          throw new RuntimeException(e);
+        }
+        return itineraries;
     }
 
     @Override
     public Itinerary getItineraryFromFile(int tripId, int itineraryId) {
 
         List<Itinerary> list = getItineraryListFromFile(tripId);
-
         return list.stream()
                 .filter(itinerary -> itinerary.getItineraryId() == itineraryId)
                 .findFirst().orElse(null);
     }
 
 
-  //TODO : 파일이 없으면 -> 파일 생성 후 객체리스트 넣고 저장 ,,
-  // 파일이 있으면 -> 있는 파일 읽고 객체 리스트 넣고 저장
     @Override
     public void addItineraryToFile(int tripId, Itinerary itinerary) {
-      String filename = getItineraryFilePathString(tripId);
-      File file = new File(filename);
+      List<Itinerary> itineraries = getItineraryListFromFile(tripId);
+      itinerary.setItineraryId(itineraries.size() + 1);
+      itineraries.add(itinerary);
+
+      File file = new File(getItineraryFilePathString(tripId));
       Gson gson = new GsonBuilder()
               .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
-      if(!file.exists()) {
-        ////파일이 없으면 만들고 저장
-      }
-
-        //파일이 존재하면 추가
-        String strItinerary = gson.toJson(itinerary);
+        String jsonArray = gson.toJson(itineraries);
+        System.out.println("jsonArray = " + jsonArray);
         try{
-          FileWriter writer = new FileWriter(filename);
-          writer.write(strItinerary);
+          FileWriter writer = new FileWriter(file);
+          writer.write(jsonArray);
+          writer.close();
       } catch (IOException e) {
           throw new RuntimeException(e);
       }

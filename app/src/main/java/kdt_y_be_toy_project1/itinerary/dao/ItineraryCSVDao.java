@@ -25,7 +25,7 @@ public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
       throw new RuntimeException("tripId must be greater than 1");
     }
 
-    List<ItineraryCSV> itineraries = null;
+    List<ItineraryCSV> itineraries;
 
     File file = new File(getItineraryFilePathString(tripId));
     try {

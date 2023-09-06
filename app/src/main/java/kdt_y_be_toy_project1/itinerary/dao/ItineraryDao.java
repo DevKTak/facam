@@ -1,7 +1,5 @@
 package kdt_y_be_toy_project1.itinerary.dao;
 
-import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
-
 import java.util.List;
 
 public interface ItineraryDao<T> {

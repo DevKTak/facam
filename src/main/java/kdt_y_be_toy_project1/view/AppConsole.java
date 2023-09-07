@@ -101,11 +101,11 @@ public class AppConsole {
             TripCreateRequest result = new TripCreateRequest(input, tripCreateRequest.startDate(),
                 tripCreateRequest.endDate());
 
-            return getSaveTripProcessor(result);
+            return getSaveOrNotTripProcessor(result);
         };
     }
 
-    private Processor getSaveTripProcessor(TripCreateRequest tripCreateRequest) {
+    private Processor getSaveOrNotTripProcessor(TripCreateRequest tripCreateRequest) {
         output.println(tripCreateRequest.toString());
         output.print(ASK_FOR_SAVE_DISPLAY);
         return input -> {
@@ -120,7 +120,7 @@ public class AppConsole {
                 }
                 default -> {
                     output.print("'Y' 또는 'N' 만 입력해주세요");
-                    return getSaveTripProcessor(tripCreateRequest);
+                    return getSaveOrNotTripProcessor(tripCreateRequest);
                 }
             }
 

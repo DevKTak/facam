@@ -2,6 +2,7 @@ package kdt_y_be_toy_project1.trip.dao;
 
 import java.util.List;
 
+import kdt_y_be_toy_project1.trip.domain.Trip;
 import kdt_y_be_toy_project1.trip.domain.TripCsv;
 import kdt_y_be_toy_project1.trip.util.CsvConversion;
 
@@ -16,4 +17,5 @@ public class TripCsvDAO{
 	public List<TripCsv> findAllTrips(){
 		return csvConversion.saveAsTrip();
 	}
+
 }

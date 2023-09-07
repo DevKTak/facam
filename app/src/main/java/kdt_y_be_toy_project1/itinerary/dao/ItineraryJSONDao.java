@@ -49,8 +49,8 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
   public List<ItineraryJSON> getItineraryListFromFile(File itineraryFile) {
-    Reader bufferedReader = createFileReader(itineraryFile);
-    return parseJsonToList(bufferedReader, itineraryFile);
+    JsonReader jsonReader = createFileReader(itineraryFile);
+    return parseJsonToList(jsonReader, itineraryFile);
   }
 
   public ItineraryJSON getItineraryFromFile(File itineraryFile, long itineraryId) {
@@ -75,10 +75,10 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public Reader createFileReader(File file) {
-    Reader bufferedReader;
+  public JsonReader createFileReader(File file) {
+    JsonReader bufferedReader;
     try {
-      bufferedReader = new BufferedReader(new FileReader(file));
+      bufferedReader = new JsonReader(new FileReader(file));
     } catch (FileNotFoundException e) {
       throw new FileIOException("파일을 읽을 수 없습니다.");
     }
@@ -86,22 +86,21 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
   }
 
 
-  public List<ItineraryJSON> parseJsonToList(Reader bufferedReader, File itineraryFile) {
+  public List<ItineraryJSON> parseJsonToList(JsonReader jsonReader, File itineraryFile) {
     List<ItineraryJSON> itineraries = Collections.emptyList();
     Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
     try {
       if (!itineraryFile.createNewFile()) {
-        JsonReader jsonReader = new JsonReader(new FileReader(itineraryFile));
-//              String jsonContent = readFileAsString(filename);
-
         List<ItineraryJSON> temp = gson.fromJson(jsonReader,
-            new TypeToken<List<ItineraryJSON>>() {}.getType());
+                      new TypeToken<List<ItineraryJSON>>() {}.getType());
         if (temp != null) itineraries = temp;
         jsonReader.close();
       }
-    } catch (JsonSyntaxException | IOException e) {
+    } catch (JsonSyntaxException e) {
       throw new JsonParseException("읽으려는 파일이 Json 파일 형식에 맞지 않습니다.");
+    } catch (IOException e) {
+      throw new FileIOException("파일을 읽을 수 없습니다.");
     }
     return itineraries;
   }

@@ -22,6 +22,9 @@ class ItineraryCSVDaoTest {
   static void beforeAll() {
     DataFileProvider dataFileProvider = new ItineraryTestDataFileProvider();
     itineraryTestCSVDataFile = dataFileProvider.getDataFile(1, FileType.CSV);
+
+    // TODO: csv 파일 만들기
+
     itineraryTestCSVDataFile.deleteOnExit();
   }
 
@@ -61,7 +64,7 @@ class ItineraryCSVDaoTest {
 
     @Test
     void addItineraryToFile() {
-      int tripId = 1;
+      long tripId = 1;
       ItineraryCSV itineraryCSV = ItineraryCSV.builder()
               .departurePlace("City X")
               .destination("City Y")
@@ -70,6 +73,6 @@ class ItineraryCSVDaoTest {
               .checkIn("2023-08-15T12:00:00")
               .checkOut("2023-08-30T10:00:00")
               .build();
-      dao.addItineraryToFile(1, itineraryCSV);
+      dao.addItineraryByTripId(tripId, itineraryCSV);
     }
 }

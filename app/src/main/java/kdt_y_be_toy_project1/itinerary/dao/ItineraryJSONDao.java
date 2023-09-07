@@ -53,7 +53,7 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
     return parseJsonToList(bufferedReader, itineraryFile);
   }
 
-  public ItineraryJSON getItineraryFromFile(File itineraryFile, int itineraryId) {
+  public ItineraryJSON getItineraryFromFile(File itineraryFile, long itineraryId) {
     return getItineraryListFromFile(itineraryFile).stream()
         .filter(itinerary -> itinerary.getItineraryId() == itineraryId)
         .findFirst().orElseThrow(() -> new ItineraryNotFoundException("찾으시려는 여정이 존재하지 않습니다."));

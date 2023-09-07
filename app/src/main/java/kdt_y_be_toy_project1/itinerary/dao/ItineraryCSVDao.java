@@ -35,7 +35,7 @@ public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
   }
 
   @Override
-  public ItineraryCSV getItineraryById(long tripId, int itineraryId) {
+  public ItineraryCSV getItineraryById(long tripId, long itineraryId) {
     return getItineraryFromFile(dataFileProvider.getDataFile(tripId, CSV), itineraryId);
   }
 
@@ -51,7 +51,7 @@ public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
     return parseCsvToList(bufferedReader, itineraryFile);
   }
 
-  public ItineraryCSV getItineraryFromFile(File itineraryFile, int itineraryId) {
+  public ItineraryCSV getItineraryFromFile(File itineraryFile, long itineraryId) {
     return getItineraryListFromFile(itineraryFile).stream()
         .filter(it -> it.getItineraryId() == itineraryId)
         .findFirst().orElseThrow(() -> new ItineraryNotFoundException("찾으시려는 여정이 존재하지 않습니다."));

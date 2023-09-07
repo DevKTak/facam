@@ -15,7 +15,7 @@ public abstract class DataFileProvider {
   protected String domainPath;
   protected String baseName;
 
-  public final File getDataFile(int tripId, FileType fileType) {
+  public final File getDataFile(long tripId, FileType fileType) {
     String format = switch (fileType) {
       case JSON -> "json";
       case CSV -> "csv";

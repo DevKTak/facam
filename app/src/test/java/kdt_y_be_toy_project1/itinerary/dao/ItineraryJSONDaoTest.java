@@ -19,7 +19,7 @@ class ItineraryJSONDaoTest {
     @DisplayName("여정 리스트를 파일에서 받아와야 함")
     @Test
     void shouldGetItineraryListFromFile() {
-        int tripId = 2;
+        int tripId = 1;
         File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileType.JSON);
         itineraryTestJSONDataFile.deleteOnExit();
         var list = itineraryJSONDao.getItineraryListFromFile(itineraryTestJSONDataFile);

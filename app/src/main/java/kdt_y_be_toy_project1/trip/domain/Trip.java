@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 
 import kdt_y_be_toy_project1.common.util.LocalDateDeserializer;
 import kdt_y_be_toy_project1.common.util.LocalDateSerializer;
+import kdt_y_be_toy_project1.trip.dto.TripResponse;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -41,12 +42,12 @@ public class Trip {
 		return gson.toJson(trip);
 	}
 
-	public static Trip fromJson(Reader tripReader) {
+	public static TripResponse fromJson(Reader tripReader) {
 		Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
 			.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
 			.create();
 
-		return gson.fromJson(tripReader, Trip.class);
+		return gson.fromJson(tripReader, TripResponse.class);
 	}
 }

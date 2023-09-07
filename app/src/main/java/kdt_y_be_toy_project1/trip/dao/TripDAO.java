@@ -2,11 +2,11 @@ package kdt_y_be_toy_project1.trip.dao;
 
 import java.util.List;
 
-import kdt_y_be_toy_project1.trip.domain.Trip;
+import kdt_y_be_toy_project1.trip.dto.TripResponse;
 
 public interface TripDAO {
 
-	void save(Long tripId, String jsonTrip);
+	Long save(Long tripId, String jsonTrip);
 
-	List<Trip> findAll();
+	List<TripResponse> findAll();
 }

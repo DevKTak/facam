@@ -31,7 +31,7 @@ public class TripCsv {
 				.startDate(tripRequest.startDate().toString()).endDate(tripRequest.endDate().toString()).build();
 	}
 	public static TripCsv fromTripResponse(TripResponse tripResponse) {
-		return TripCsv.builder().tripId(tripResponse.getTripId()).tripName(tripResponse.getTripName())
-				.startDate(tripResponse.getStartDate()).endDate(tripResponse.getEndDate()).build();
+		return TripCsv.builder().tripId(tripResponse.tripId()).tripName(tripResponse.tripName())
+				.startDate(tripResponse.startDate()).endDate(tripResponse.endDate()).build();
 	}
 }

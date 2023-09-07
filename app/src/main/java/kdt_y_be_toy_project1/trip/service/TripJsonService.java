@@ -8,19 +8,20 @@ import java.util.List;
 import kdt_y_be_toy_project1.trip.dao.TripJsonDAO;
 import kdt_y_be_toy_project1.trip.domain.Trip;
 import kdt_y_be_toy_project1.trip.dto.CreateTripRequest;
+import kdt_y_be_toy_project1.trip.dto.TripResponse;
 
 public class TripJsonService implements TripService {
 
 	private final TripJsonDAO tripJsonDAO = new TripJsonDAO();
 
 	@Override
-	public void save(CreateTripRequest dto) {
+	public Long save(CreateTripRequest dto) {
 		Trip trip = Trip.from(nextTripId(), dto.tripName(), dto.startDate(), dto.endDate());
-		tripJsonDAO.save(trip.getTripId(), trip.toJson(trip));
+		return tripJsonDAO.save(trip.getTripId(), trip.toJson(trip));
 	}
 
 	@Override
-	public List<Trip> findAll() {
+	public List<TripResponse> findAll() {
 		return tripJsonDAO.findAll();
 	}
 

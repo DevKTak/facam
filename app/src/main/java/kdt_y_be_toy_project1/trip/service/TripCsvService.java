@@ -25,7 +25,13 @@ public class TripCsvService {
 	 * @return List<TripCsvResponse>
 	 */
 	public List<TripResponse> findAllTrips(){
-		return tripCsvDao.findAllTrips().stream().map(tripCsvDomain->TripResponse.fromTripCsvDomain(tripCsvDomain)).toList();
+		return tripCsvDao.findAllTrips().stream().map(tripCsvDomain->TripCsvToTripResponse(tripCsvDomain)).toList();
+	}
+	
+	public TripResponse TripCsvToTripResponse(TripCsv tripCsv) {
+		if(tripCsv==null)
+			throw new RuntimeException("TripCsv 객체가 NULL값입니다.");
+		return new TripResponse(tripCsv.getTripId(), tripCsv.getTripName(), tripCsv.getStartDate(), tripCsv.getEndDate());
 	}
 
 }

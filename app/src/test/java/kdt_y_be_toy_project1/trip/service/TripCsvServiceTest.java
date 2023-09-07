@@ -26,8 +26,7 @@ class TripCsvServiceTest {
 		// given
 
 		// when
-		tripService.findAllTrips().forEach(x->System.out.println(x.getTripId()+" "+x.getTripName()+" "
-				+x.getStartDate()+" "+x.getEndDate()));
+		tripService.findAllTrips().forEach(x->System.out.println(x.toString()));
 
 
 	}

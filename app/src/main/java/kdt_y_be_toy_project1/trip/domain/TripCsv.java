@@ -2,8 +2,8 @@ package kdt_y_be_toy_project1.trip.domain;
 
 import com.opencsv.bean.CsvBindByName;
 
-import kdt_y_be_toy_project1.trip.dto.TripCsvRequest;
-import kdt_y_be_toy_project1.trip.dto.TripCsvResponse;
+import kdt_y_be_toy_project1.trip.dto.CreateTripRequest;
+import kdt_y_be_toy_project1.trip.dto.TripResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,15 +23,15 @@ public class TripCsv {
 	@CsvBindByName(column = "end_date")
 	private String endDate;
 	
-	private long itineraryCount;
+	//open csv mapping 함수를 사용하기 위해 stripng date를 사용!
+
 	
-	public static TripCsv fromTripCsvRequest(TripCsvRequest tripRequest) {
-		return TripCsv.builder().tripId(tripRequest.getTripId()).tripName(tripRequest.getTripName())
-				.startDate(tripRequest.getStartDate()).endDate(tripRequest.getEndDate()).build();
+	public static TripCsv fromTripRequest(CreateTripRequest tripRequest) {
+		return TripCsv.builder().tripName(tripRequest.tripName())
+				.startDate(tripRequest.startDate().toString()).endDate(tripRequest.endDate().toString()).build();
 	}
-	public static TripCsv fromTripCsvResponse(TripCsvResponse tripResponse) {
+	public static TripCsv fromTripResponse(TripResponse tripResponse) {
 		return TripCsv.builder().tripId(tripResponse.getTripId()).tripName(tripResponse.getTripName())
-				.startDate(tripResponse.getStartDate()).endDate(tripResponse.getEndDate())
-				.itineraryCount(tripResponse.getItineraryCount()).build();
+				.startDate(tripResponse.getStartDate()).endDate(tripResponse.getEndDate()).build();
 	}
 }

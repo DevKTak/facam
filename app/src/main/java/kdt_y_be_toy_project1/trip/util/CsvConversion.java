@@ -89,54 +89,37 @@ public class CsvConversion{
 			
 			return tripCsv.getTripId();
 	}
-	public long countItineraries(long tripId) {
-		System.out.println(tripId);
-		long itinerariesCount=0;
-		String itinerariesFileName=ITINERARY_PATH+ITINERARY_BASE+String.valueOf(tripId)+EXTENSION;
-		File itinerariesfile=new File(itinerariesFileName);
-		if(itinerariesfile.exists()) {
-			try {
-				itinerariesCount=Files.lines(itinerariesfile.toPath()).count();
-				itinerariesCount=(itinerariesCount==0)?0:itinerariesCount-1;
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return itinerariesCount;
-	}
 		
 	public List<TripCsv> saveAsTrip(){
 		List<TripCsv> tripCsvs=new ArrayList<TripCsv>();
 		File dir=new File(TRIP_PATH);
 		
-		if(dir.list()!=null && dir.list().length!=0) {
-			for(String fileName:dir.list()) {
-				if(fileName.startsWith("trip_") && fileName.endsWith(".csv")) {
-					try {
-						BufferedReader br=new BufferedReader(new FileReader(TRIP_PATH+fileName));
-						List<TripCsv> retriveTripCsv = new CsvToBeanBuilder<TripCsv>(br)
-						            .withType(TripCsv.class)
-						            .build()
-						            .parse();
-					
-						br.close();
-						
-						if(retriveTripCsv==null || retriveTripCsv.size()==0) {
-							continue;
-						}
-						else {
-							tripCsvs.addAll(retriveTripCsv);
-							retriveTripCsv.get(0).setItineraryCount(countItineraries(retriveTripCsv.get(0).getTripId()));
-						}
-					}
-					catch(IOException e) {
-						throw new RuntimeException(e);
-					}		
-				}		
-			}
-		}
-		else {
+		if(dir.list()==null || dir.list().length==0) {
 			throw new RuntimeException("해당 폴더에 여행 기록이 존재하지 않습니다.");
+		}
+		
+		for(String fileName:dir.list()) {
+			if(fileName.startsWith("trip_") && fileName.endsWith(".csv")) {
+				try {
+					BufferedReader br=new BufferedReader(new FileReader(TRIP_PATH+fileName));
+					List<TripCsv> retriveTripCsv = new CsvToBeanBuilder<TripCsv>(br)
+					            .withType(TripCsv.class)
+					            .build()
+					            .parse();
+				
+					br.close();
+					
+					if(retriveTripCsv==null || retriveTripCsv.size()==0) {
+						continue;
+					}
+					else {
+						tripCsvs.addAll(retriveTripCsv);
+					}
+				}
+				catch(IOException e) {
+					throw new RuntimeException(e);
+				}		
+			}		
 		}
 		
 		if(tripCsvs.size()==0) {

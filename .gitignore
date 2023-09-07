@@ -74,6 +74,10 @@ local.properties
 # Log file
 *.log
 
+.project
+app/.classpath
+app/.project
+
 # BlueJ files
 *.ctxt
 

@@ -123,6 +123,7 @@ public class AppConsole {
                     return getSaveTripProcessor(tripCreateRequest);
                 }
             }
+
         };
     }
 

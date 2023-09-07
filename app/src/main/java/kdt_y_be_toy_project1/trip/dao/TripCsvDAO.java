@@ -1,19 +1,21 @@
 package kdt_y_be_toy_project1.trip.dao;
 
+import java.util.List;
+
 import kdt_y_be_toy_project1.trip.domain.Trip;
+import kdt_y_be_toy_project1.trip.domain.TripCsv;
+import kdt_y_be_toy_project1.trip.util.CsvConversion;
 
-public class TripCsvDAO implements TripDAO {
+public class TripCsvDAO{
+	
+	private final CsvConversion csvConversion=new CsvConversion();
 
-	@Override
-	public void save(Long tripId, String jsonTrip) {
-		// TODO Auto-generated method stub
-		
+	public long saveTrip(TripCsv tripCsv) {
+		return csvConversion.saveAsCsv(tripCsv);
 	}
 
-	@Override
-	public Trip findAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<TripCsv> findAllTrips(){
+		return csvConversion.saveAsTrip();
 	}
 
 }

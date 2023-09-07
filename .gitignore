@@ -88,3 +88,5 @@ local.properties
 **/resources/itinerary/
 **/resources/trip/
 **/resources/file/
+**/resources/test_itinerary/
+**/resources/test_trip/

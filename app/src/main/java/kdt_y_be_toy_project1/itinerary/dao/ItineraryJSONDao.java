@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import kdt_y_be_toy_project1.common.data.DataFileProvider;
 import kdt_y_be_toy_project1.common.data.ItineraryDataFile;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
 
@@ -15,19 +16,29 @@ import static kdt_y_be_toy_project1.itinerary.type.FileType.JSON;
 
 public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
 
+  private final DataFileProvider dataFileProvider;
+
+  public ItineraryJSONDao() {
+    this.dataFileProvider = new ItineraryDataFile();
+  }
+
+  public ItineraryJSONDao(DataFileProvider dataFileProvider) {
+    this.dataFileProvider = dataFileProvider;
+  }
+
   @Override
   public List<ItineraryJSON> getItineraryListByTripId(int tripId) {
-    return getItineraryListFromFile(new ItineraryDataFile().getDataFile(tripId, JSON));
+    return getItineraryListFromFile(dataFileProvider.getDataFile(tripId, JSON));
   }
 
   @Override
   public ItineraryJSON getItineraryById(int tripId, int itineraryId) {
-    return getItineraryFromFile(new ItineraryDataFile().getDataFile(tripId, JSON), itineraryId);
+    return getItineraryFromFile(dataFileProvider.getDataFile(tripId, JSON), itineraryId);
   }
 
   @Override
   public void addItineraryByTripId(int tripId, ItineraryJSON itineraryJSON) {
-    addItineraryToFile(new ItineraryDataFile().getDataFile(tripId, JSON), itineraryJSON);
+    addItineraryToFile(dataFileProvider.getDataFile(tripId, JSON), itineraryJSON);
   }
 
   public List<ItineraryJSON> getItineraryListFromFile(File itineraryFile) {

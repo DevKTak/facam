@@ -1,5 +1,6 @@
 package kdt_y_be_toy_project1.itinerary.service;
 
+import kdt_y_be_toy_project1.common.data.DataFileProvider;
 import kdt_y_be_toy_project1.itinerary.dao.ItineraryCSVDao;
 import kdt_y_be_toy_project1.itinerary.dao.ItineraryJSONDao;
 import kdt_y_be_toy_project1.itinerary.dto.AddItineraryRequest;
@@ -14,8 +15,18 @@ import static kdt_y_be_toy_project1.itinerary.type.FileType.JSON;
 
 public class ItineraryService {
 
-  private final ItineraryJSONDao jsonDao = new ItineraryJSONDao();
-  private final ItineraryCSVDao csvDao = new ItineraryCSVDao();
+  private final ItineraryJSONDao jsonDao;
+  private final ItineraryCSVDao csvDao;
+
+  public ItineraryService() {
+    this.jsonDao = new ItineraryJSONDao();
+    this.csvDao = new ItineraryCSVDao();
+  }
+
+  public ItineraryService(DataFileProvider dataFileProvider) {
+    this.jsonDao = new ItineraryJSONDao(dataFileProvider);
+    this.csvDao = new ItineraryCSVDao(dataFileProvider);
+  }
 
   public List<ItineraryResponse> getAllItineraryList(int tripId, FileType type) {
     // fileApi를 통해 Itinerary 객체 리스트를 받아온다

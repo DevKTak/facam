@@ -1,7 +1,10 @@
 package kdt_y_be_toy_project1.itinerary.dao;
 
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
+import kdt_y_be_toy_project1.itinerary.exception.file.FileIOException;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,12 +14,10 @@ class ItineraryJSONDaoTest {
     @Test
     void getItineraryListFromFile() {
 
-        int tripId = 2;
+        int tripId = 3;
         ItineraryJSONDao itineraryJSONDao = new ItineraryJSONDao();
 
         var list = itineraryJSONDao.getItineraryListFromFile(tripId);
-
-
     }
 
     @Test
@@ -33,7 +34,7 @@ class ItineraryJSONDaoTest {
                 .checkOut("2023-08-30T10:00:00")
                 .build();
 
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(FileIOException.class, () -> {
             itineraryJSONDao.addItineraryToFile(tripId, itinerary);
         });
 
@@ -66,5 +67,24 @@ class ItineraryJSONDaoTest {
        
         assertEquals(list.get(list.size()-1).getItineraryId(), itinerary.getItineraryId());
 
+    }
+
+    @Test
+    void getItineraryFromFile() {
+
+        ItineraryJSONDao itineraryJSONDao = new ItineraryJSONDao();
+
+        List<ItineraryJSON> itineraryListFromFile = itineraryJSONDao.getItineraryListFromFile(1);
+
+        ItineraryJSON a = itineraryJSONDao.getItineraryFromFile(1, 99);
+        System.out.println(a);
+
+    }
+
+    @Test
+    void addItineraryToFile() {
+        ItineraryJSONDao itineraryJSONDao = new ItineraryJSONDao();
+        var a = ItineraryJSON.builder().departurePlace("서울").build();
+        itineraryJSONDao.addItineraryToFile(1, a);
     }
 }

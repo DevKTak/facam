@@ -16,7 +16,7 @@ class TripCsvServiceTest {
 		// given
 		CreateTripRequest createTripRequest = TripTestFixture.getCreateTripRequest();
 		// when
-		tripService.saveTrip(createTripRequest);
+		tripService.save(createTripRequest);
 		// then
 	}
 
@@ -26,7 +26,7 @@ class TripCsvServiceTest {
 		// given
 
 		// when
-		tripService.findAllTrips().forEach(x->System.out.println(x.toString()));
+		tripService.findAll().forEach(x->System.out.println(x.toString()));
 
 
 	}

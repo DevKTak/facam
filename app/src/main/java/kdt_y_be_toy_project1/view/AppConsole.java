@@ -123,11 +123,7 @@ public class AppConsole {
                     return getSaveTripProcessor(tripCreateRequest);
                 }
             }
-<<<<<<< HEAD
 
-            //return getInsertItineraryProcessor();
-=======
->>>>>>> d4d558bf79541add7d966d14f9163124cf46d9c0
         };
     }
 

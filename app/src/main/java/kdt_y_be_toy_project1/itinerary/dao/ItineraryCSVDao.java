@@ -5,11 +5,11 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvException;
 import kdt_y_be_toy_project1.common.data.DataFileProvider;
-import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
 import kdt_y_be_toy_project1.common.data.ItineraryDataFile;
+import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static kdt_y_be_toy_project1.itinerary.type.FileType.CSV;
@@ -42,16 +42,15 @@ public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
   }
 
   public List<ItineraryCSV> getItineraryListFromFile(File itineraryFile) {
-    List<ItineraryCSV> itineraries;
+    List<ItineraryCSV> itineraries = Collections.emptyList();
     try {
-      if (itineraryFile.createNewFile()) {
-        itineraries = new ArrayList<>();
-      } else {
+      if (!itineraryFile.createNewFile()) {
         Reader bufferedReader = new BufferedReader(new FileReader(itineraryFile));
-        itineraries = new CsvToBeanBuilder<ItineraryCSV>(bufferedReader)
+        List<ItineraryCSV> temp = new CsvToBeanBuilder<ItineraryCSV>(bufferedReader)
             .withType(ItineraryCSV.class)
             .build()
             .parse();
+        if (temp != null) itineraries = temp;
         bufferedReader.close();
       }
     } catch (IOException | NullPointerException e) {
@@ -66,10 +65,16 @@ public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
         .findFirst().orElse(null);
   }
 
-  public void addItineraryToFile(File itineraryFile, ItineraryCSV itineraryCSV) {
+  public void addItineraryToFile(File itineraryFile, ItineraryCSV itinerary) {
     List<ItineraryCSV> itineraries = getItineraryListFromFile(itineraryFile);
-    itineraryCSV.setItineraryId(itineraries.size() + 1);
-    itineraries.add(itineraryCSV);
+    if (itineraries.isEmpty()) {
+      itinerary.setItineraryId(1);
+      itineraries = Collections.singletonList(itinerary);
+    } else {
+      itinerary.setItineraryId(itineraries.size() + 1);
+      itineraries.add(itinerary);
+    }
+
 
     try (Writer bufferedWriter = new BufferedWriter(new FileWriter(itineraryFile))) {
       StatefulBeanToCsv<ItineraryCSV> beanToCsv = new StatefulBeanToCsvBuilder<ItineraryCSV>(bufferedWriter).build();

@@ -4,12 +4,16 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import kdt_y_be_toy_project1.common.data.DataFileProvider;
 import kdt_y_be_toy_project1.common.data.ItineraryDataFile;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import static kdt_y_be_toy_project1.itinerary.type.FileType.JSON;
@@ -42,19 +46,18 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
   }
 
   public List<ItineraryJSON> getItineraryListFromFile(File itineraryFile) {
-    List<ItineraryJSON> itineraries;
+    List<ItineraryJSON> itineraries = Collections.emptyList();
 
     Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
     try {
-      if (itineraryFile.createNewFile()) {
-
-        itineraries = new ArrayList<>();
-      } else {
-        Reader bufferedReader = new BufferedReader(new FileReader(itineraryFile));
+      if (!itineraryFile.createNewFile()) {
+        JsonReader jsonReader = new JsonReader(new FileReader(itineraryFile));
 //              String jsonContent = readFileAsString(filename);
-        itineraries = gson.fromJson(bufferedReader, new TypeToken<List<ItineraryJSON>>() {
-        }.getType());
+
+        List<ItineraryJSON> temp = gson.fromJson(jsonReader, new TypeToken<List<ItineraryJSON>>() {}.getType());
+        if (temp != null) itineraries = temp;
+        jsonReader.close();
       }
     } catch (IOException | NullPointerException e) {
       throw new RuntimeException(e);
@@ -72,8 +75,13 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
 
   public void addItineraryToFile(File itineraryFile, ItineraryJSON itinerary) {
     List<ItineraryJSON> itineraries = getItineraryListFromFile(itineraryFile);
-    itinerary.setItineraryId(itineraries.size() + 1);
-    itineraries.add(itinerary);
+    if (itineraries.isEmpty()) {
+      itinerary.setItineraryId(1);
+      itineraries = Collections.singletonList(itinerary);
+    } else {
+      itinerary.setItineraryId(itineraries.size() + 1);
+      itineraries.add(itinerary);
+    }
 
     Gson gson = new GsonBuilder()
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();

@@ -22,12 +22,7 @@ public abstract class DataFileProvider {
     };
 
     try {
-      Path resourceDirPath = Path.of(System.getProperty("user.dir"), RESOURCE_PATH);
-
-      Path domainDirPath = Path.of(resourceDirPath.toString(), domainPath);
-      if (!domainDirPath.toFile().exists()) {
-        Files.createDirectories(domainDirPath);
-      }
+      File domainDirPath = getDomainDirectory();
 
       Path dataFileDirPath = Path.of(domainDirPath.toString(), format);
       if (!dataFileDirPath.toFile().exists()) {
@@ -35,7 +30,23 @@ public abstract class DataFileProvider {
       }
 
       Path dataFilePath = Path.of(dataFileDirPath.toString(), baseName + "_" + tripId + "." + format);
+
       return dataFilePath.toFile();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public final File getDomainDirectory() {
+    try {
+      Path resourceDirPath = Path.of(System.getProperty("user.dir"), RESOURCE_PATH);
+
+      Path domainDirPath = Path.of(resourceDirPath.toString(), domainPath);
+      if (!domainDirPath.toFile().exists()) {
+        Files.createDirectories(domainDirPath);
+      }
+
+      return domainDirPath.toFile();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

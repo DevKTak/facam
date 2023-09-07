@@ -2,12 +2,13 @@ package kdt_y_be_toy_project1.trip.service;
 
 import java.util.List;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kdt_y_be_toy_project1.trip.TripTestFixture;
-import kdt_y_be_toy_project1.trip.domain.Trip;
 import kdt_y_be_toy_project1.trip.dto.CreateTripRequest;
+import kdt_y_be_toy_project1.trip.dto.TripResponse;
 
 class TripJsonServiceTest {
 
@@ -20,9 +21,12 @@ class TripJsonServiceTest {
 		CreateTripRequest createTripRequest = TripTestFixture.getCreateTripRequest();
 
 		// when
+		List<TripResponse> trips = tripService.findAll();
 		tripService.save(createTripRequest);
+		List<TripResponse> trips2 = tripService.findAll();
 
 		// then
+		Assertions.assertThat(trips2.size()).isEqualTo(trips.size() + 1);
 	}
 
 	@Test
@@ -31,7 +35,7 @@ class TripJsonServiceTest {
 		// given
 
 		// when
-		List<Trip> trips = tripService.findAll();
+		List<TripResponse> trips = tripService.findAll();
 
 		// then
 		System.out.println(trips);

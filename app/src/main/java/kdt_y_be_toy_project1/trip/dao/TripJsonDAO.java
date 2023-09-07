@@ -10,23 +10,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kdt_y_be_toy_project1.trip.domain.Trip;
+import kdt_y_be_toy_project1.trip.dto.TripResponse;
 
 public class TripJsonDAO implements TripDAO {
 
 	private final String BASE_PATH = "src/main/resources/trip/json";
 
 	@Override
-	public void save(Long tripId, String jsonTrip) {
+	public Long save(Long tripId, String jsonTrip) {
 		try (Writer fileWriter = new FileWriter(BASE_PATH + "/trip_" + tripId + ".json")) {
 			fileWriter.write(jsonTrip);
+
+			return tripId;
 		} catch (IOException e) {
 			throw new RuntimeException("JSON 파일 저장 실패", e);
 		}
 	}
 
 	@Override
-	public List<Trip> findAll() {
-		List<Trip> trips = new ArrayList<>();
+	public List<TripResponse> findAll() {
+		List<TripResponse> trips = new ArrayList<>();
 		File[] files = getListFiles();
 
 		if (files.length == 0) {

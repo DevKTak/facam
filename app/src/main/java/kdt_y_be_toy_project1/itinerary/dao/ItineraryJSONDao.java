@@ -3,16 +3,17 @@ package kdt_y_be_toy_project1.itinerary.dao;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import kdt_y_be_toy_project1.common.data.DataFileProvider;
 import kdt_y_be_toy_project1.common.data.ItineraryDataFile;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
+import kdt_y_be_toy_project1.itinerary.exception.file.FileIOException;
+import kdt_y_be_toy_project1.itinerary.exception.format.JsonParseException;
+import kdt_y_be_toy_project1.itinerary.exception.service.ItineraryNotFoundException;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,46 +32,31 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
   }
 
   @Override
-  public List<ItineraryJSON> getItineraryListByTripId(int tripId) {
+  public List<ItineraryJSON> getItineraryListByTripId(long tripId) {
     return getItineraryListFromFile(dataFileProvider.getDataFile(tripId, JSON));
   }
 
   @Override
-  public ItineraryJSON getItineraryById(int tripId, int itineraryId) {
+  public ItineraryJSON getItineraryById(long tripId, long itineraryId) {
     return getItineraryFromFile(dataFileProvider.getDataFile(tripId, JSON), itineraryId);
   }
 
   @Override
-  public void addItineraryByTripId(int tripId, ItineraryJSON itineraryJSON) {
+  public void addItineraryByTripId(long tripId, ItineraryJSON itineraryJSON) {
     addItineraryToFile(dataFileProvider.getDataFile(tripId, JSON), itineraryJSON);
   }
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+
   public List<ItineraryJSON> getItineraryListFromFile(File itineraryFile) {
-    List<ItineraryJSON> itineraries = Collections.emptyList();
-
-    Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-
-    try {
-      if (!itineraryFile.createNewFile()) {
-        JsonReader jsonReader = new JsonReader(new FileReader(itineraryFile));
-//              String jsonContent = readFileAsString(filename);
-
-        List<ItineraryJSON> temp = gson.fromJson(jsonReader, new TypeToken<List<ItineraryJSON>>() {}.getType());
-        if (temp != null) itineraries = temp;
-        jsonReader.close();
-      }
-    } catch (IOException | NullPointerException e) {
-      throw new RuntimeException(e);
-    }
-    return itineraries;
+    Reader bufferedReader = createFileReader(itineraryFile);
+    return parseJsonToList(bufferedReader, itineraryFile);
   }
 
   public ItineraryJSON getItineraryFromFile(File itineraryFile, int itineraryId) {
-
-    List<ItineraryJSON> list = getItineraryListFromFile(itineraryFile);
-    return list.stream()
+    return getItineraryListFromFile(itineraryFile).stream()
         .filter(itinerary -> itinerary.getItineraryId() == itineraryId)
-        .findFirst().orElse(null);
+        .findFirst().orElseThrow(() -> new ItineraryNotFoundException("찾으시려는 여정이 존재하지 않습니다."));
   }
 
   public void addItineraryToFile(File itineraryFile, ItineraryJSON itinerary) {
@@ -83,16 +69,63 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
       itineraries.add(itinerary);
     }
 
+    String jsonArray = convertItineraryListToJson(itineraries);
+    writeJsonToFile(itineraryFile, jsonArray);
+  }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+  public Reader createFileReader(File file) {
+    Reader bufferedReader;
+    try {
+      bufferedReader = new BufferedReader(new FileReader(file));
+    } catch (FileNotFoundException e) {
+      throw new FileIOException("파일을 읽을 수 없습니다.");
+    }
+    return bufferedReader;
+  }
+
+
+  public List<ItineraryJSON> parseJsonToList(Reader bufferedReader, File itineraryFile) {
+    List<ItineraryJSON> itineraries = Collections.emptyList();
+    Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+
+    try {
+      if (!itineraryFile.createNewFile()) {
+        JsonReader jsonReader = new JsonReader(new FileReader(itineraryFile));
+//              String jsonContent = readFileAsString(filename);
+
+        List<ItineraryJSON> temp = gson.fromJson(jsonReader,
+            new TypeToken<List<ItineraryJSON>>() {}.getType());
+        if (temp != null) itineraries = temp;
+        jsonReader.close();
+      }
+    } catch (JsonSyntaxException | IOException e) {
+      throw new JsonParseException("읽으려는 파일이 Json 파일 형식에 맞지 않습니다.");
+    }
+    return itineraries;
+  }
+
+  public String convertItineraryListToJson(List<ItineraryJSON> itineraries) {
     Gson gson = new GsonBuilder()
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-
-    String jsonArray = gson.toJson(itineraries);
+    String response;
     try {
-      FileWriter writer = new FileWriter(itineraryFile);
+      response = gson.toJson(itineraries);
+    } catch (JsonParseException e) {
+      throw new JsonParseException("Json 파일 형식에 맞지 않습니다.");
+    }
+    return response;
+  }
+
+  public void writeJsonToFile(File file, String jsonArray) {
+    FileWriter writer;
+    try {
+      writer = new FileWriter(file);
       writer.write(jsonArray);
       writer.close();
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new FileIOException("File을 쓸 수 없습니다.");
     }
   }
 }

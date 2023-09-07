@@ -7,6 +7,7 @@ import kdt_y_be_toy_project1.itinerary.dto.AddItineraryRequest;
 import kdt_y_be_toy_project1.itinerary.dto.ItineraryResponse;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
+import kdt_y_be_toy_project1.itinerary.exception.service.ItineraryNotFoundException;
 import kdt_y_be_toy_project1.itinerary.type.FileType;
 
 import java.util.List;
@@ -41,8 +42,11 @@ public class ItineraryService {
     }
   }
 
+
+
   public ItineraryResponse getItinerary(int tripId, int itineraryId, FileType type) {
     // fileApi를 통해 Itinerary 객체를 받아온다
+
     if (type.equals(JSON)) {
       return ItineraryResponse
           .fromJSONEntity(jsonDao.getItineraryById(tripId, itineraryId));

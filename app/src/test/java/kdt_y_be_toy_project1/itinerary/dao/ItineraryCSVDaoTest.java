@@ -58,4 +58,18 @@ class ItineraryCSVDaoTest {
     ItineraryCSV itineraryCSV = dao.getItineraryFromFile(itineraryTestCSVDataFile, itineraryId);
     assertEquals(expected, itineraryCSV.toString());
   }
+
+    @Test
+    void addItineraryToFile() {
+      int tripId = 1;
+      ItineraryCSV itineraryCSV = ItineraryCSV.builder()
+              .departurePlace("City X")
+              .destination("City Y")
+              .departureTime("2023-08-15T08:00:00")
+              .arrivalTime("2023-08-15T10:00:00")
+              .checkIn("2023-08-15T12:00:00")
+              .checkOut("2023-08-30T10:00:00")
+              .build();
+      dao.addItineraryToFile(1, itineraryCSV);
+    }
 }

@@ -22,7 +22,7 @@ class ItineraryJSONDaoTest {
         int tripId = 2;
         File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileType.JSON);
         itineraryTestJSONDataFile.deleteOnExit();
-        var list = itineraryJSONDao.getItineraryList(itineraryTestJSONDataFile);
+        var list = itineraryJSONDao.getItineraryListFromFile(itineraryTestJSONDataFile);
 
     }
 
@@ -53,7 +53,7 @@ class ItineraryJSONDaoTest {
         int itineraryId = 1;
         File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileType.JSON);
         itineraryTestJSONDataFile.deleteOnExit();
-        itineraryJSONDao.getItinerary(itineraryTestJSONDataFile, itineraryId);
+        itineraryJSONDao.getItineraryFromFile(itineraryTestJSONDataFile, itineraryId);
     }
 
     @DisplayName("마지막으로 추가된 여정 파일의 인덱스가 일치하는지 확인해야 함")
@@ -72,8 +72,8 @@ class ItineraryJSONDaoTest {
         int tripId = 1;
         File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileType.JSON);
         itineraryTestJSONDataFile.deleteOnExit();
-        itineraryJSONDao.addItinerary(itineraryTestJSONDataFile, itinerary);
-        var list = itineraryJSONDao.getItineraryList(itineraryTestJSONDataFile);
+        itineraryJSONDao.addItineraryToFile(itineraryTestJSONDataFile, itinerary);
+        var list = itineraryJSONDao.getItineraryListFromFile(itineraryTestJSONDataFile);
 
        
         assertEquals(list.get(list.size()-1).getItineraryId(), itinerary.getItineraryId());

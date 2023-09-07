@@ -30,7 +30,7 @@ class ItineraryCSVDaoTest {
   @Test
   void shouldGetItineraryListFromFile() {
     String expected = "[ItineraryCSV(itineraryId=1, departurePlace=City X, destination=City Y, departureTime=2023-08-15T08:00:00, arrivalTime=2023-08-15T10:00:00, checkIn=2023-08-15T12:00:00, checkOut=2023-08-30T10:00:00)]";
-    List<ItineraryCSV> itineraries = dao.getItineraryList(itineraryTestCSVDataFile);
+    List<ItineraryCSV> itineraries = dao.getItineraryListFromFile(itineraryTestCSVDataFile);
     assertEquals(expected, Arrays.toString(itineraries.toArray()));
   }
 
@@ -39,7 +39,7 @@ class ItineraryCSVDaoTest {
   void shouldGetItineraryFromFile() {
     int itineraryId = 1;
     String expected = "ItineraryCSV(itineraryId=1, departurePlace=City X, destination=City Y, departureTime=2023-08-15T08:00:00, arrivalTime=2023-08-15T10:00:00, checkIn=2023-08-15T12:00:00, checkOut=2023-08-30T10:00:00)";
-    ItineraryCSV itineraryCSV = dao.getItinerary(itineraryTestCSVDataFile, itineraryId);
+    ItineraryCSV itineraryCSV = dao.getItineraryFromFile(itineraryTestCSVDataFile, itineraryId);
     assertEquals(expected, itineraryCSV.toString());
   }
 
@@ -54,8 +54,8 @@ class ItineraryCSVDaoTest {
         .checkIn("2023-08-15T12:00:00")
         .checkOut("2023-08-30T10:00:00")
         .build();
-    dao.addItinerary(itineraryTestCSVDataFile, itineraryCSV);
-    List<ItineraryCSV> itineraries = dao.getItineraryList(itineraryTestCSVDataFile);
+    dao.addItineraryToFile(itineraryTestCSVDataFile, itineraryCSV);
+    List<ItineraryCSV> itineraries = dao.getItineraryListFromFile(itineraryTestCSVDataFile);
     assertEquals(itineraries.get(itineraries.size() - 1), itineraryCSV);
   }
 }

@@ -20,11 +20,11 @@ public class ItineraryService {
   public List<ItineraryResponse> getAllItineraryList(int tripId, FileType type) {
     // fileApi를 통해 Itinerary 객체 리스트를 받아온다
     if (type.equals(JSON)) {
-      return jsonDao.getItineraryListFromFile(tripId)
+      return jsonDao.getItineraryListByTripId(tripId)
           .stream().map(ItineraryResponse::fromJSONEntity)
           .toList();
     } else {
-      return csvDao.getItineraryListFromFile(tripId)
+      return csvDao.getItineraryListByTripId(tripId)
           .stream().map(ItineraryResponse::fromCSVEntity)
           .toList();
     }
@@ -34,16 +34,16 @@ public class ItineraryService {
     // fileApi를 통해 Itinerary 객체를 받아온다
     if (type.equals(JSON)) {
       return ItineraryResponse
-          .fromJSONEntity(jsonDao.getItineraryFromFile(tripId, itineraryId));
+          .fromJSONEntity(jsonDao.getItineraryById(tripId, itineraryId));
     } else {
       return ItineraryResponse
-          .fromCSVEntity(csvDao.getItineraryFromFile(tripId, itineraryId));
+          .fromCSVEntity(csvDao.getItineraryById(tripId, itineraryId));
     }
   }
 
   public void addItinerary(int tripId, AddItineraryRequest request) {
     // fileApi를 통해 Itinerary 객체를 넣는다
-    csvDao.addItineraryToFile(tripId, ItineraryCSV.from(request));
-    jsonDao.addItineraryToFile(tripId, ItineraryJSON.from(request));
+    csvDao.addItineraryByTripId(tripId, ItineraryCSV.from(request));
+    jsonDao.addItineraryByTripId(tripId, ItineraryJSON.from(request));
   }
 }

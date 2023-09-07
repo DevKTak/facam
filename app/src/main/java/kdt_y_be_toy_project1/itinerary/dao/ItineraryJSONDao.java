@@ -16,21 +16,21 @@ import static kdt_y_be_toy_project1.itinerary.type.FileType.JSON;
 public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
 
   @Override
-  public List<ItineraryJSON> getItineraryListFromFile(int tripId) {
-    return getItineraryList(new ItineraryDataFile().getDataFile(tripId, JSON));
+  public List<ItineraryJSON> getItineraryListByTripId(int tripId) {
+    return getItineraryListFromFile(new ItineraryDataFile().getDataFile(tripId, JSON));
   }
 
   @Override
-  public ItineraryJSON getItineraryFromFile(int tripId, int itineraryId) {
-    return getItinerary(new ItineraryDataFile().getDataFile(tripId, JSON), itineraryId);
+  public ItineraryJSON getItineraryById(int tripId, int itineraryId) {
+    return getItineraryFromFile(new ItineraryDataFile().getDataFile(tripId, JSON), itineraryId);
   }
 
   @Override
-  public void addItineraryToFile(int tripId, ItineraryJSON itineraryJSON) {
-    addItinerary(new ItineraryDataFile().getDataFile(tripId, JSON), itineraryJSON);
+  public void addItineraryByTripId(int tripId, ItineraryJSON itineraryJSON) {
+    addItineraryToFile(new ItineraryDataFile().getDataFile(tripId, JSON), itineraryJSON);
   }
 
-  public List<ItineraryJSON> getItineraryList(File itineraryFile) {
+  public List<ItineraryJSON> getItineraryListFromFile(File itineraryFile) {
     List<ItineraryJSON> itineraries;
 
     Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
@@ -51,16 +51,16 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
     return itineraries;
   }
 
-  public ItineraryJSON getItinerary(File itineraryFile, int itineraryId) {
+  public ItineraryJSON getItineraryFromFile(File itineraryFile, int itineraryId) {
 
-    List<ItineraryJSON> list = getItineraryList(itineraryFile);
+    List<ItineraryJSON> list = getItineraryListFromFile(itineraryFile);
     return list.stream()
         .filter(itinerary -> itinerary.getItineraryId() == itineraryId)
         .findFirst().orElse(null);
   }
 
-  public void addItinerary(File itineraryFile, ItineraryJSON itinerary) {
-    List<ItineraryJSON> itineraries = getItineraryList(itineraryFile);
+  public void addItineraryToFile(File itineraryFile, ItineraryJSON itinerary) {
+    List<ItineraryJSON> itineraries = getItineraryListFromFile(itineraryFile);
     itinerary.setItineraryId(itineraries.size() + 1);
     itineraries.add(itinerary);
 

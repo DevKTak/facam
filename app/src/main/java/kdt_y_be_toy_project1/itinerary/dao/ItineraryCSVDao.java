@@ -16,21 +16,21 @@ import static kdt_y_be_toy_project1.itinerary.type.FileType.CSV;
 public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
 
   @Override
-  public List<ItineraryCSV> getItineraryListFromFile(int tripId) {
-    return getItineraryList(new ItineraryDataFile().getDataFile(tripId, CSV));
+  public List<ItineraryCSV> getItineraryListByTripId(int tripId) {
+    return getItineraryListFromFile(new ItineraryDataFile().getDataFile(tripId, CSV));
   }
 
   @Override
-  public ItineraryCSV getItineraryFromFile(int tripId, int itineraryId) {
-    return getItinerary(new ItineraryDataFile().getDataFile(tripId, CSV), itineraryId);
+  public ItineraryCSV getItineraryById(int tripId, int itineraryId) {
+    return getItineraryFromFile(new ItineraryDataFile().getDataFile(tripId, CSV), itineraryId);
   }
 
   @Override
-  public void addItineraryToFile(int tripId, ItineraryCSV itineraryCSV) {
-    addItinerary(new ItineraryDataFile().getDataFile(tripId, CSV), itineraryCSV);
+  public void addItineraryByTripId(int tripId, ItineraryCSV itineraryCSV) {
+    addItineraryToFile(new ItineraryDataFile().getDataFile(tripId, CSV), itineraryCSV);
   }
 
-  public List<ItineraryCSV> getItineraryList(File itineraryFile) {
+  public List<ItineraryCSV> getItineraryListFromFile(File itineraryFile) {
     List<ItineraryCSV> itineraries;
     try {
       if (itineraryFile.createNewFile()) {
@@ -49,14 +49,14 @@ public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
     return itineraries;
   }
 
-  public ItineraryCSV getItinerary(File itineraryFile, int itineraryId) {
-    return getItineraryList(itineraryFile).stream()
+  public ItineraryCSV getItineraryFromFile(File itineraryFile, int itineraryId) {
+    return getItineraryListFromFile(itineraryFile).stream()
         .filter(it -> it.getItineraryId() == itineraryId)
         .findFirst().orElse(null);
   }
 
-  public void addItinerary(File itineraryFile, ItineraryCSV itineraryCSV) {
-    List<ItineraryCSV> itineraries = getItineraryList(itineraryFile);
+  public void addItineraryToFile(File itineraryFile, ItineraryCSV itineraryCSV) {
+    List<ItineraryCSV> itineraries = getItineraryListFromFile(itineraryFile);
     itineraryCSV.setItineraryId(itineraries.size() + 1);
     itineraries.add(itineraryCSV);
 

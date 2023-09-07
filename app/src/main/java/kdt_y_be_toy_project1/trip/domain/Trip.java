@@ -1,10 +1,12 @@
 package kdt_y_be_toy_project1.trip.domain;
 
+import java.io.Reader;
 import java.time.LocalDate;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import kdt_y_be_toy_project1.common.util.LocalDateDeserializer;
 import kdt_y_be_toy_project1.common.util.LocalDateSerializer;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,5 +39,14 @@ public class Trip {
 			.create();
 
 		return gson.toJson(trip);
+	}
+
+	public static Trip fromJson(Reader tripReader) {
+		Gson gson = new GsonBuilder()
+			.setPrettyPrinting()
+			.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
+			.create();
+
+		return gson.fromJson(tripReader, Trip.class);
 	}
 }

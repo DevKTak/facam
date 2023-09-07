@@ -22,9 +22,7 @@ import kdt_y_be_toy_project1.trip.domain.TripCsv;
 public class CsvConversion{
 
 	private static final String TRIP_PATH=System.getProperty("user.dir")+"/src/main/resources/trip/csv/";
-	private static final String ITINERARY_PATH=System.getProperty("user.dir")+"/src/main/resources/itinerary/csv/";
 	private static final String TRIP_BASE="trip_";
-	private static final String ITINERARY_BASE="itineraries_trip_";
 	private static final String EXTENSION=".csv";
 	
 	
@@ -44,8 +42,9 @@ public class CsvConversion{
 			if(dir.list()==null) {
 				throw new RuntimeException("해당 디렉토리가 존재하지 않습니다.");
 			}
+			
 			for(String fileName:dir.list()) {
-				if(fileName.startsWith("trip_") && fileName.endsWith(".csv")) {
+				if(fileName.startsWith(TRIP_BASE) && fileName.endsWith(EXTENSION)) {
 					String existTripId=fileName.subSequence(TRIP_BASE.length(), fileName.length()-EXTENSION.length()).toString();
 					try {
 						newTripId=Math.max(Long.parseLong(existTripId)+1,newTripId);
@@ -99,7 +98,7 @@ public class CsvConversion{
 		}
 		
 		for(String fileName:dir.list()) {
-			if(fileName.startsWith("trip_") && fileName.endsWith(".csv")) {
+			if(fileName.startsWith(TRIP_BASE) && fileName.endsWith(EXTENSION)) {
 				try {
 					BufferedReader br=new BufferedReader(new FileReader(TRIP_PATH+fileName));
 					List<TripCsv> retriveTripCsv = new CsvToBeanBuilder<TripCsv>(br)

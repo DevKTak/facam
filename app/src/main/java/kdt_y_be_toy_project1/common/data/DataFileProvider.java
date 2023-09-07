@@ -11,6 +11,7 @@ import java.nio.file.Path;
 
 @AllArgsConstructor
 public abstract class DataFileProvider {
+  private final static String RESOURCE_PATH = "/src/main/resources";
   protected String domainPath;
   protected String baseName;
 
@@ -21,10 +22,19 @@ public abstract class DataFileProvider {
     };
 
     try {
-      Path resourceDirPath = Path.of(System.getProperty("user.dir"), domainPath, format);
-      Files.createDirectories(resourceDirPath);
-      Path dataFilePath = Path.of(resourceDirPath.toString(), baseName + "_" + tripId + "." + format);
+      Path resourceDirPath = Path.of(System.getProperty("user.dir"), RESOURCE_PATH);
 
+      Path domainDirPath = Path.of(resourceDirPath.toString(), domainPath);
+      if (!domainDirPath.toFile().exists()) {
+        Files.createDirectories(domainDirPath);
+      }
+
+      Path dataFileDirPath = Path.of(domainDirPath.toString(), format);
+      if (!dataFileDirPath.toFile().exists()) {
+        Files.createDirectories(dataFileDirPath);
+      }
+
+      Path dataFilePath = Path.of(dataFileDirPath.toString(), baseName + "_" + tripId + "." + format);
       return dataFilePath.toFile();
     } catch (IOException e) {
       throw new RuntimeException(e);

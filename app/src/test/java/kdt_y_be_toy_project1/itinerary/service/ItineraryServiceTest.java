@@ -8,6 +8,7 @@ import kdt_y_be_toy_project1.itinerary.type.FileType;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -37,6 +38,13 @@ class ItineraryServiceTest {
 
     itineraryTestCSVDataFile.deleteOnExit();
     itineraryTestJSONDataFile.deleteOnExit();
+
+    try {
+      itineraryTestCSVDataFile.createNewFile();
+      itineraryTestJSONDataFile.createNewFile();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @DisplayName("1. 한 여행에 있는 여정 리스트를")
@@ -45,7 +53,7 @@ class ItineraryServiceTest {
   @Nested
   class AddItinerary {
 
-    int tripId = 1;
+    long tripId = 1;
 
     @DisplayName("JSON 파일과 CSV 파일에 저장할 수 있어야 함")
     @Order(1)
@@ -70,7 +78,7 @@ class ItineraryServiceTest {
       List<ItineraryResponse> itineraryJSONResponseList =
           itineraryService.getAllItineraryList(1, FileType.JSON);
 
-      itineraryJSONResponseList.forEach(System.out::println);
+//      itineraryJSONResponseList.forEach(System.out::println);
 
       compareItineraryAttributes(itineraryJSONResponseList.get(0));
     }
@@ -82,7 +90,7 @@ class ItineraryServiceTest {
       List<ItineraryResponse> itineraryCSVResponseList =
           itineraryService.getAllItineraryList(1, FileType.CSV);
 
-      itineraryCSVResponseList.forEach(System.out::println);
+//      itineraryCSVResponseList.forEach(System.out::println);
 
       compareItineraryAttributes(itineraryCSVResponseList.get(0));
     }
@@ -93,7 +101,7 @@ class ItineraryServiceTest {
   @Nested
   class GetItineraryList {
 
-    int tripId = 1;
+    long tripId = 1;
 
     @DisplayName("JSON 파일에서 가져올 수 있어야 함")
     @Test
@@ -117,8 +125,8 @@ class ItineraryServiceTest {
   @Nested
   class GetItineraryElement {
 
-    int tripId = 1;
-    int itineraryId = 1;
+    long tripId = 1;
+    long itineraryId = 1;
 
     @DisplayName("JSON 파일에서 가져올 수 있어야 함")
     @Test

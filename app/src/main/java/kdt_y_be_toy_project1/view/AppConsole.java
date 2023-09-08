@@ -124,27 +124,142 @@ public class AppConsole {
         return getInsertItineraryDeparturePlaceProcessor(builder.tripId(id));
     }
 
+    // CASE 2
+
+    /**
+     * If select 2 in MenuSelectProcessor
+     */
     private Processor getInsertItineraryProcessor() {
+        output.println(SAVE_MENU_HEADER.formatted("여정"));
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("여행 ID"));
+
+        return input -> {
+            SaveItineraryToFileRequestDtoBuilder builder = SaveItineraryToFileRequestDto.builder();
+            return getInsertItineraryDeparturePlaceProcessor(builder.tripId(Long.parseLong(input)));
+        };
+    }
+
+    private Processor getInsertItineraryDeparturePlaceProcessor(
+        SaveItineraryToFileRequestDtoBuilder builder) {
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("출발지"));
+        return input -> getInsertItineraryDestinationProcessor(builder.departurePlace(input));
+    }
+
+    private Processor getInsertItineraryDestinationProcessor(
+        SaveItineraryToFileRequestDtoBuilder builder) {
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("도착 장소"));
+        return input -> getInsertItineraryDepartureTimeProcessor(builder.destination(input));
+    }
 
     private Processor getInsertItineraryDepartureTimeProcessor(
         SaveItineraryToFileRequestDtoBuilder builder) {
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("출발 시간(yyyy-MM-dd HH:mm:ss)"));
+        return input -> getInsertItineraryArrivalTimeProcessor(builder.departureTime(input));
     }
+
+    private Processor getInsertItineraryArrivalTimeProcessor(
+        SaveItineraryToFileRequestDtoBuilder builder) {
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("도착 시간(yyyy-MM-dd HH:mm:ss)"));
+        return input -> getInsertItineraryCheckInProcessor(builder.arrivalTime(input));
+    }
+
+    private Processor getInsertItineraryCheckInProcessor(
+        SaveItineraryToFileRequestDtoBuilder builder) {
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("CheckIn 시간(yyyy-MM-dd HH:mm:ss)"));
+        return input -> getInsertItineraryCheckOutProcessor(builder.checkIn(input));
+    }
+
+    private Processor getInsertItineraryCheckOutProcessor(
+        SaveItineraryToFileRequestDtoBuilder builder) {
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("CheckOut 시간(yyyy-MM-dd HH:mm:ss)"));
+        return input -> getSaveOrNotItineraryProcessor(builder.checkOut(input));
+    }
+
+    private Processor getSaveOrNotItineraryProcessor(SaveItineraryToFileRequestDtoBuilder builder) {
+        output.println(builder.toString());
+        output.print(SAVE_OR_NOT_DISPLAY);
         return input -> {
-            throw new UnsupportedOperationException();
+            switch (input.toLowerCase()) {
+                case "y" -> {
+                    return getSelectSaveItineraryFormatProcessor(builder);
+                }
+                case "n" -> {
+                    return getSelectMenuProcessor();
+                }
+                default -> {
+                    output.println(INSERT_ONLY_Y_OR_N_DISPLAY);
+                    return getSaveOrNotItineraryProcessor(builder);
+                }
+            }
+        };
+    }
+
+    private Processor getSelectSaveItineraryFormatProcessor(
+        SaveItineraryToFileRequestDtoBuilder builder) {
+        output.print(SELECT_SAVE_FILE_FORMAT_DISPLAY);
+        return input -> {
+            String fileFormat = input.toUpperCase();
+
+            if (isSupportedFileFormat(fileFormat)) {
+                output.println(INSERT_ONLY_JSON_OR_CSV_DISPLAY);
+                return getSelectSaveItineraryFormatProcessor(builder);
+            }
+
+            SaveItineraryToFileRequestDto saveDto = builder.fileFormat(fileFormat).build();
+
+            itineraryFileController.saveItinerary(saveDto);
+            return getKeepSaveItineraryOrNotProcessor(saveDto.getTripId());
+        };
+    }
+
+    private Processor getKeepSaveItineraryOrNotProcessor(long tripId) {
+        output.print(KEEP_SAVE_ITINERARY_OR_NOT_DISPLAY);
+        return input -> {
+            switch (input.toLowerCase()) {
+                case "y" -> {
+                    return getInsertItineraryProcessor(tripId);
+                }
+                case "n" -> {
+                    return getSelectMenuProcessor();
+                }
+                default -> {
+                    output.println(INSERT_ONLY_Y_OR_N_DISPLAY);
+                    return getKeepSaveItineraryOrNotProcessor(tripId);
+                }
+            }
         };
     }
 
     private Processor getSearchTripProcessor() {
+        output.print(SELECT_FILE_FORMAT_FOR_SEARCH_DISPLAY);
 
         return input -> {
-            throw new UnsupportedOperationException();
+            String fileFormat = input.toUpperCase();
+
+            if (isSupportedFileFormat(fileFormat)) {
+                output.println(INSERT_ONLY_JSON_OR_CSV_DISPLAY);
+                return getSearchTripProcessor();
+            }
+
+            output.print(TRIP_RESPONSE_HEADER);
+            tripFileController.findAllTripsFromFile(FileFormat.valueOf(fileFormat))
+                .forEach(tripResponse -> output.println(tripResponse.toString()));
+
+            return getSearchItinerariesByTripIdProcessor(fileFormat);
         };
     }
 
-    private Processor getSearchItineraryProcessor() {
+    private Processor getSearchItinerariesByTripIdProcessor(String fileFormat) {
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("여행 ID"));
 
         return input -> {
-            throw new UnsupportedOperationException();
+            output.print(TRIP_DETAIL_RESPONSE_HEADER);
+            FindItinerariesFromFileRequestDto requestDto =
+                new FindItinerariesFromFileRequestDto(Long.parseLong(input), fileFormat);
+            itineraryFileController.findItinerariesByTripId(requestDto)
+                .forEach(tripResponse -> output.println(tripResponse.toString()));
+
+            return getSelectMenuProcessor();
         };
     }
 

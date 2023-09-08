@@ -17,7 +17,7 @@ import java.io.*;
 import java.util.Collections;
 import java.util.List;
 
-import static kdt_y_be_toy_project1.itinerary.type.FileType.JSON;
+import static kdt_y_be_toy_project1.common.util.FileFormat.JSON;
 
 public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
 

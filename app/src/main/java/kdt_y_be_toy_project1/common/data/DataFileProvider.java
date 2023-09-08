@@ -1,6 +1,6 @@
 package kdt_y_be_toy_project1.common.data;
 
-import kdt_y_be_toy_project1.itinerary.type.FileType;
+import kdt_y_be_toy_project1.common.util.FileFormat;
 import lombok.AllArgsConstructor;
 
 import java.io.File;
@@ -15,7 +15,7 @@ public abstract class DataFileProvider {
   protected String domainPath;
   protected String baseName;
 
-  public final File getDataFile(long tripId, FileType fileType) {
+  public final File getDataFile(long tripId, FileFormat fileType) {
     String format = switch (fileType) {
       case JSON -> "json";
       case CSV -> "csv";

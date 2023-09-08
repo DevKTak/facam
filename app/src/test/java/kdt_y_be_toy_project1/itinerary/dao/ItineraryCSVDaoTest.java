@@ -2,8 +2,8 @@ package kdt_y_be_toy_project1.itinerary.dao;
 
 import kdt_y_be_toy_project1.common.data.DataFileProvider;
 import kdt_y_be_toy_project1.common.data.ItineraryTestDataFileProvider;
+import kdt_y_be_toy_project1.common.util.FileFormat;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
-import kdt_y_be_toy_project1.itinerary.type.FileType;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -22,7 +22,7 @@ class ItineraryCSVDaoTest {
   @BeforeAll
   static void beforeAll() {
     DataFileProvider dataFileProvider = new ItineraryTestDataFileProvider();
-    itineraryTestCSVDataFile = dataFileProvider.getDataFile(1, FileType.CSV);
+    itineraryTestCSVDataFile = dataFileProvider.getDataFile(1, FileFormat.CSV);
     itineraryTestCSVDataFile.deleteOnExit();
   }
 

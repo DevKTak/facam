@@ -1,6 +1,7 @@
 package kdt_y_be_toy_project1.itinerary.service;
 
 import kdt_y_be_toy_project1.common.data.DataFileProvider;
+import kdt_y_be_toy_project1.common.util.FileFormat;
 import kdt_y_be_toy_project1.itinerary.dao.ItineraryCSVDao;
 import kdt_y_be_toy_project1.itinerary.dao.ItineraryJSONDao;
 import kdt_y_be_toy_project1.itinerary.dto.AddItineraryRequest;
@@ -8,11 +9,8 @@ import kdt_y_be_toy_project1.itinerary.dto.ItineraryResponse;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
 import kdt_y_be_toy_project1.itinerary.exception.service.TripPeriodMismatchException;
-import kdt_y_be_toy_project1.itinerary.type.FileType;
 
 import java.util.List;
-
-import static kdt_y_be_toy_project1.itinerary.type.FileType.JSON;
 
 public class ItineraryService {
 
@@ -29,9 +27,9 @@ public class ItineraryService {
     this.csvDao = new ItineraryCSVDao(dataFileProvider);
   }
 
-  public List<ItineraryResponse> getAllItineraryList(long tripId, FileType type) {
+  public List<ItineraryResponse> getAllItineraryList(long tripId, FileFormat type) {
     // fileApi를 통해 Itinerary 객체 리스트를 받아온다
-    if (type.equals(JSON)) {
+    if (type.equals(FileFormat.JSON)) {
       return jsonDao.getItineraryListByTripId(tripId)
           .stream().map(ItineraryResponse::fromJSONEntity)
           .toList();
@@ -42,10 +40,10 @@ public class ItineraryService {
     }
   }
 
-  public ItineraryResponse getItinerary(long tripId, long itineraryId, FileType type) {
+  public ItineraryResponse getItinerary(long tripId, long itineraryId, FileFormat type) {
     // fileApi를 통해 Itinerary 객체를 받아온다
 
-    if (type.equals(JSON)) {
+    if (type.equals(FileFormat.JSON)) {
       return ItineraryResponse
           .fromJSONEntity(jsonDao.getItineraryById(tripId, itineraryId));
     } else {

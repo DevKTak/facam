@@ -2,10 +2,11 @@ package kdt_y_be_toy_project1.trip.dao;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +19,11 @@ public class TripJsonDAO implements TripDAO {
 
 	@Override
 	public Long save(Long tripId, String jsonTrip) {
-		try (Writer fileWriter = new FileWriter(BASE_PATH + "/trip_" + tripId + ".json")) {
-			fileWriter.write(jsonTrip);
+		final Path path = Paths.get(BASE_PATH + "/trip_" + tripId + ".json");
+
+		try {
+			Files.createDirectories(path.getParent());
+			Files.writeString(path, jsonTrip);
 
 			return tripId;
 		} catch (IOException e) {
@@ -32,7 +36,7 @@ public class TripJsonDAO implements TripDAO {
 		List<TripResponse> trips = new ArrayList<>();
 		File[] files = getListFiles();
 
-		if (files.length == 0) {
+		if (files == null || files.length == 0) {
 			throw new RuntimeException("여행 기록이 존재하지 않습니다.");
 		}
 

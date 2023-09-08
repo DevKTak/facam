@@ -1,6 +1,7 @@
 package kdt_y_be_toy_project1.trip.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -21,12 +22,14 @@ class TripJsonServiceTest {
 		CreateTripRequest createTripRequest = TripTestFixture.getCreateTripRequest();
 
 		// when
-		List<TripResponse> trips = tripService.findAll();
-		tripService.save(createTripRequest);
-		List<TripResponse> trips2 = tripService.findAll();
+		Long tripId = tripService.save(createTripRequest);
+		List<TripResponse> trips = tripService.findAll()
+			.stream()
+			.sorted((trip1, trip2) -> Long.compare(trip2.tripId(), trip1.tripId()))
+			.collect(Collectors.toList());
 
 		// then
-		Assertions.assertThat(trips2.size()).isEqualTo(trips.size() + 1);
+		Assertions.assertThat(tripId).isEqualTo(trips.get(0).tripId());
 	}
 
 	@Test

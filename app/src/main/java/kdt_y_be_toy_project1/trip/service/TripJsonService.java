@@ -28,14 +28,12 @@ public class TripJsonService implements TripService {
 	protected Long nextTripId() {
 		File[] files = tripJsonDAO.getListFiles();
 
-		if (files.length == 0) {
+		if (files == null || files.length == 0) {
 			return 1L;
 		}
-		String lastFileName = Arrays.stream(files).max(Comparator.comparing(file -> {
-				System.out.println(file.lastModified());
-				return file.lastModified();
-			}
-		)).orElseThrow().getName();
+		String lastFileName = Arrays.stream(files)
+			.max(Comparator.comparing(file -> file.lastModified()
+			)).orElseThrow().getName();
 
 		int startIndex = lastFileName.lastIndexOf("_");
 		int endIndex = lastFileName.lastIndexOf(".json");

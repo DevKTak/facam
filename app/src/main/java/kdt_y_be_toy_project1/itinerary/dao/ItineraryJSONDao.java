@@ -42,6 +42,11 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
   }
 
   @Override
+  public void createItineraryByTripId(long tripId) {
+    createItineraryToFile(dataFileProvider.getDataFile(tripId, JSON));
+  }
+
+  @Override
   public void addItineraryByTripId(long tripId, ItineraryJSON itineraryJSON) {
     addItineraryToFile(dataFileProvider.getDataFile(tripId, JSON), itineraryJSON);
   }
@@ -57,6 +62,14 @@ public class ItineraryJSONDao implements ItineraryDao<ItineraryJSON> {
     return getItineraryListFromFile(itineraryFile).stream()
         .filter(itinerary -> itinerary.getItineraryId() == itineraryId)
         .findFirst().orElseThrow(() -> new ItineraryNotFoundException("찾으시려는 여정이 존재하지 않습니다."));
+  }
+
+  public void createItineraryToFile(File file) {
+    try {
+      file.createNewFile();
+    } catch (IOException e) {
+      throw new FileIOException("파일이 이미 존재하거나 만들 수 없습니다.");
+    }
   }
 
   public void addItineraryToFile(File itineraryFile, ItineraryJSON itinerary) {

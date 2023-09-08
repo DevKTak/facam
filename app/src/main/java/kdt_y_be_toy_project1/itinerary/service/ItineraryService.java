@@ -54,6 +54,12 @@ public class ItineraryService {
     }
   }
 
+  public void createItinerary(long tripId) {
+    // 여행 인덱스에 대응하는 여정 파일을 만든다
+    csvDao.createItineraryByTripId(tripId);
+    jsonDao.createItineraryByTripId(tripId);
+  }
+
   public void addItinerary(long tripId, AddItineraryRequest request) {
     // fileApi를 통해 Itinerary 객체를 넣는다
     validAddItineraryRequest(request);

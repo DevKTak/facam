@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static kdt_y_be_toy_project1.itinerary.type.FileType.CSV;
+import static kdt_y_be_toy_project1.itinerary.type.FileType.JSON;
 
 public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
 
@@ -40,6 +41,11 @@ public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
   }
 
   @Override
+  public void createItineraryByTripId(long tripId) {
+    createItineraryToFile(dataFileProvider.getDataFile(tripId, CSV));
+  }
+
+  @Override
   public void addItineraryByTripId(long tripId, ItineraryCSV itineraryCSV) {
     addItineraryToFile(dataFileProvider.getDataFile(tripId, CSV), itineraryCSV);
   }
@@ -55,6 +61,14 @@ public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
     return getItineraryListFromFile(itineraryFile).stream()
         .filter(it -> it.getItineraryId() == itineraryId)
         .findFirst().orElseThrow(() -> new ItineraryNotFoundException("찾으시려는 여정이 존재하지 않습니다."));
+  }
+
+  public void createItineraryToFile(File file) {
+    try {
+      file.createNewFile();
+    } catch (IOException e) {
+      throw new FileIOException("파일이 이미 존재하거나 만들 수 없습니다.");
+    }
   }
 
   public void addItineraryToFile(File itineraryFile, ItineraryCSV itinerary) {

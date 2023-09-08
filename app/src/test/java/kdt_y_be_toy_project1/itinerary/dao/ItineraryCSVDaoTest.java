@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ItineraryCSVDaoTest {
@@ -27,15 +28,19 @@ class ItineraryCSVDaoTest {
     DataFileProvider dataFileProvider = new ItineraryTestDataFileProvider();
     itineraryTestCSVDataFile = dataFileProvider.getDataFile(1, FileType.CSV);
     itineraryTestCSVDataFile.deleteOnExit();
-    try {
-      itineraryTestCSVDataFile.createNewFile();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
-  @DisplayName("하나의 여정을 추가할 수 있고, 추가된 여정을 확인할 수 있어야 함")
+  @DisplayName("여행에 대응하는 여정 파일을 만들 수 있어야 함")
   @Order(1)
+  @Test
+  void shouldCreateItineraryToFile() {
+    dao.createItineraryToFile(itineraryTestCSVDataFile);
+    assertTrue(itineraryTestCSVDataFile.exists());
+  }
+
+
+  @DisplayName("하나의 여정을 추가할 수 있고, 추가된 여정을 확인할 수 있어야 함")
+  @Order(2)
   @Test
   void shouldAddItineraryToFile() {
     ItineraryCSV itineraryCSV = ItineraryCSV.builder()
@@ -54,7 +59,7 @@ class ItineraryCSVDaoTest {
   }
 
   @DisplayName("여정 리스트를 파일에서 받아와야 함")
-  @Order(1)
+  @Order(3)
   @Test
   void shouldGetItineraryListFromFile() {
     String expected = "[ItineraryCSV(itineraryId=1, departurePlace=City X, destination=City Y, departureTime=2023-08-15T08:00:00, arrivalTime=2023-08-15T10:00:00, checkIn=2023-08-15T12:00:00, checkOut=2023-08-30T10:00:00)]";
@@ -65,7 +70,7 @@ class ItineraryCSVDaoTest {
   }
 
   @DisplayName("하나의 여정을 파일에서 받아와야 함")
-  @Order(2)
+  @Order(4)
   @Test
   void shouldGetItineraryFromFile() {
     long itineraryId = 1;

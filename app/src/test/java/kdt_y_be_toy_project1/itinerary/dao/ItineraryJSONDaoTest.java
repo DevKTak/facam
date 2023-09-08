@@ -5,16 +5,14 @@ import kdt_y_be_toy_project1.common.data.ItineraryTestDataFileProvider;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
 import kdt_y_be_toy_project1.itinerary.exception.file.FileIOException;
 import kdt_y_be_toy_project1.itinerary.type.FileType;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ItineraryJSONDaoTest {
 
     private final ItineraryJSONDao itineraryJSONDao = new ItineraryJSONDao();
@@ -29,6 +27,15 @@ class ItineraryJSONDaoTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @DisplayName("여행에 대응하는 여정 파일을 만들 수 있어야 함")
+    @Order(1)
+    @Test
+    void shouldCreateItineraryToFile() {
+        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileType.JSON);
+        itineraryJSONDao.createItineraryToFile(itineraryTestJSONDataFile);
+        assertTrue(itineraryTestJSONDataFile.exists());
     }
 
     @DisplayName("여정 리스트를 파일에서 받아와야 함")

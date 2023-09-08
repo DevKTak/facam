@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 class ItineraryServiceTest {
@@ -38,17 +39,44 @@ class ItineraryServiceTest {
 
     itineraryTestCSVDataFile.deleteOnExit();
     itineraryTestJSONDataFile.deleteOnExit();
-
-    try {
-      itineraryTestCSVDataFile.createNewFile();
-      itineraryTestJSONDataFile.createNewFile();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   @DisplayName("1. 한 여행에 있는 여정 리스트를")
   @Order(1)
+  @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+  @Nested
+  class CreateItinerary {
+
+    long tripId = 1;
+
+    @DisplayName("JSON 파일과 CSV 파일을 만들 수 있어야 함")
+    @Order(1)
+    @Test
+    void createItineraryToJsonFileAndCsvFile() {
+      itineraryService.createItinerary(tripId);
+    }
+
+    @DisplayName("JSON 파일이 존재해야 함")
+    @Order(2)
+    @Test
+    void shouldExistJSONItineraryFile() {
+      DataFileProvider dataFileProvider = new ItineraryTestDataFileProvider();
+      File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileType.JSON);
+      assertTrue(itineraryTestJSONDataFile.exists());
+    }
+
+    @DisplayName("CSV 파일이 존재해야 함")
+    @Order(3)
+    @Test
+    void shouldExistCSVItineraryFile() {
+      DataFileProvider dataFileProvider = new ItineraryTestDataFileProvider();
+      File itineraryTestCSVDataFile = dataFileProvider.getDataFile(1, FileType.CSV);
+      assertTrue(itineraryTestCSVDataFile.exists());
+    }
+  }
+
+  @DisplayName("2. 한 여행에 있는 여정 리스트를")
+  @Order(2)
   @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
   @Nested
   class AddItinerary {
@@ -96,8 +124,8 @@ class ItineraryServiceTest {
     }
   }
 
-  @DisplayName("2. 한 여행에 있는 모든 여정 리스트를")
-  @Order(2)
+  @DisplayName("3. 한 여행에 있는 모든 여정 리스트를")
+  @Order(3)
   @Nested
   class GetItineraryList {
 
@@ -120,8 +148,8 @@ class ItineraryServiceTest {
     }
   }
 
-  @DisplayName("3. 한 여행에 있는 한 여정을 ")
-  @Order(3)
+  @DisplayName("4. 한 여행에 있는 한 여정을 ")
+  @Order(4)
   @Nested
   class GetItineraryElement {
 

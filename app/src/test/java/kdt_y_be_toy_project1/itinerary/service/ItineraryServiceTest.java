@@ -8,7 +8,6 @@ import kdt_y_be_toy_project1.itinerary.type.FileType;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

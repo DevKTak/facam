@@ -1,7 +1,5 @@
 package kdt_y_be_toy_project1.itinerary.dao;
 
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvException;
 import kdt_y_be_toy_project1.common.data.DataFileProvider;
 import kdt_y_be_toy_project1.common.data.ItineraryTestDataFileProvider;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
@@ -9,8 +7,6 @@ import kdt_y_be_toy_project1.itinerary.type.FileType;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 

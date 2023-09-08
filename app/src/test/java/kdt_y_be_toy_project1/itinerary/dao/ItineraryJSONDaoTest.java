@@ -22,11 +22,6 @@ class ItineraryJSONDaoTest {
     static void beforeAll() {
         File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileType.JSON);
         itineraryTestJSONDataFile.deleteOnExit();
-        try {
-            itineraryTestJSONDataFile.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @DisplayName("여행에 대응하는 여정 파일을 만들 수 있어야 함")

@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import kdt_y_be_toy_project1.itinerary.dto.AddItineraryRequest;
 import lombok.*;
 
+import java.time.format.DateTimeFormatter;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,10 +38,10 @@ public class ItineraryJSON {
         .itineraryId(request.getItineraryId())
         .departurePlace(request.getDeparturePlace())
         .destination(request.getDestination())
-        .departureTime(String.valueOf(request.getDepartureTime()))
-        .arrivalTime(String.valueOf(request.getArrivalTime()))
-        .checkIn(String.valueOf(request.getCheckIn()))
-        .checkOut(String.valueOf(request.getCheckOut()))
+        .departureTime(request.getDepartureTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+        .arrivalTime(request.getArrivalTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+        .checkIn(request.getCheckIn().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+        .checkOut(request.getCheckOut().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
         .build();
   }
 }

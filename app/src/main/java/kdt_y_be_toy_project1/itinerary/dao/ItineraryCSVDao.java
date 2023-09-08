@@ -4,80 +4,121 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvException;
+import kdt_y_be_toy_project1.common.data.DataFileProvider;
+import kdt_y_be_toy_project1.common.data.ItineraryDataFile;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
+import kdt_y_be_toy_project1.itinerary.exception.file.FileIOException;
+import kdt_y_be_toy_project1.itinerary.exception.format.CsvParseException;
+import kdt_y_be_toy_project1.itinerary.exception.service.ItineraryNotFoundException;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+
+import static kdt_y_be_toy_project1.itinerary.type.FileType.CSV;
 
 public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
-  private static final String BASE_PATH = "/itinerary";
-  private static final String BASE_NAME = "itineraries_trip_";
-  private static final String FORMAT = "csv";
+
+  private final DataFileProvider dataFileProvider;
+
+  public ItineraryCSVDao() {
+    this.dataFileProvider = new ItineraryDataFile();
+  }
+
+  public ItineraryCSVDao(DataFileProvider dataFileProvider) {
+    this.dataFileProvider = dataFileProvider;
+  }
 
   @Override
-  public List<ItineraryCSV> getItineraryListFromFile(int tripId) {
-    if (tripId < 1) {
-      throw new RuntimeException("tripId must be greater than 1");
+  public List<ItineraryCSV> getItineraryListByTripId(long tripId) {
+    return getItineraryListFromFile(dataFileProvider.getDataFile(tripId, CSV));
+  }
+
+  @Override
+  public ItineraryCSV getItineraryById(long tripId, long itineraryId) {
+    return getItineraryFromFile(dataFileProvider.getDataFile(tripId, CSV), itineraryId);
+  }
+
+  @Override
+  public void createItineraryByTripId(long tripId) {
+    createItineraryToFile(dataFileProvider.getDataFile(tripId, CSV));
+  }
+
+  @Override
+  public void addItineraryByTripId(long tripId, ItineraryCSV itineraryCSV) {
+    addItineraryToFile(dataFileProvider.getDataFile(tripId, CSV), itineraryCSV);
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+
+  public List<ItineraryCSV> getItineraryListFromFile(File itineraryFile) {
+    Reader bufferedReader = createFileReader(itineraryFile);
+    return parseCsvToList(bufferedReader, itineraryFile);
+  }
+
+  public ItineraryCSV getItineraryFromFile(File itineraryFile, long itineraryId) {
+    return getItineraryListFromFile(itineraryFile).stream()
+        .filter(it -> it.getItineraryId() == itineraryId)
+        .findFirst().orElseThrow(() -> new ItineraryNotFoundException("찾으시려는 여정이 존재하지 않습니다."));
+  }
+
+  public void createItineraryToFile(File file) {
+    try {
+      file.createNewFile();
+    } catch (IOException e) {
+      throw new FileIOException("파일이 이미 존재하거나 만들 수 없습니다.");
+    }
+  }
+
+  public void addItineraryToFile(File itineraryFile, ItineraryCSV itinerary) {
+    List<ItineraryCSV> itineraries = getItineraryListFromFile(itineraryFile);
+    if (itineraries.isEmpty()) {
+      itinerary.setItineraryId(1);
+      itineraries = Collections.singletonList(itinerary);
+    } else {
+      itinerary.setItineraryId(itineraries.size() + 1);
+      itineraries.add(itinerary);
     }
 
-    List<ItineraryCSV> itineraries;
+    writeCsvToFile(itineraryFile, itineraries);
+  }
 
-    File file = new File(getItineraryFilePathString(tripId));
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+
+  public Reader createFileReader(File file) {
+    Reader bufferedReader;
     try {
-      if (file.createNewFile()) {
-        itineraries = new ArrayList<>();
-      } else {
-        Reader bufferedReader = new BufferedReader(new FileReader(file));
-        itineraries = new CsvToBeanBuilder<ItineraryCSV>(bufferedReader)
+      bufferedReader = new BufferedReader(new FileReader(file));
+    } catch (FileNotFoundException e) {
+      throw new FileIOException("파일을 읽을 수 없습니다.");
+    }
+    return bufferedReader;
+  }
+
+  public List<ItineraryCSV> parseCsvToList(Reader bufferedReader, File itineraryFile) {
+    List<ItineraryCSV> itineraries = Collections.emptyList();
+    try {
+      if (!itineraryFile.createNewFile()) {
+        List<ItineraryCSV> temp = new CsvToBeanBuilder<ItineraryCSV>(bufferedReader)
             .withType(ItineraryCSV.class)
             .build()
             .parse();
+        if (temp != null) itineraries = temp;
         bufferedReader.close();
       }
-    } catch (IOException | NullPointerException e) {
-      throw new RuntimeException(e);
+    } catch (IllegalStateException | IOException e) {
+      throw new CsvParseException("읽으려는 파일이 Csv 파일 형식에 맞지 않습니다.");
     }
+
     return itineraries;
   }
 
-  @Override
-  public ItineraryCSV getItineraryFromFile(int tripId, int itineraryId) {
-    List<ItineraryCSV> itineraries = getItineraryListFromFile(tripId);
-    return itineraries.stream()
-        .filter(it -> it.getItineraryId() == itineraryId)
-        .findFirst().orElse(null);
-  }
-
-  @Override
-  public void addItineraryToFile(int tripId, ItineraryCSV itineraryCSV) {
-    List<ItineraryCSV> itineraries = getItineraryListFromFile(tripId);
-    itineraryCSV.setItineraryId(itineraries.size() + 1);
-    itineraries.add(itineraryCSV);
-
-    File file = new File(getItineraryFilePathString(tripId));
-    try (Writer bufferedWriter = new BufferedWriter(new FileWriter(file))) {
-      StatefulBeanToCsv<ItineraryCSV> beanToCsv = new StatefulBeanToCsvBuilder<ItineraryCSV>(bufferedWriter).build();
+  public void writeCsvToFile(File file, List<ItineraryCSV> itineraries) {
+    try (FileWriter writer = new FileWriter(file)) {
+      StatefulBeanToCsv<ItineraryCSV> beanToCsv = new StatefulBeanToCsvBuilder<ItineraryCSV>(writer).build();
       beanToCsv.write(itineraries);
     } catch (IOException | CsvException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  public String getItineraryFilePathString(int tripId) {
-    try {
-      Path resourcePath = Path.of(Objects.requireNonNull(this.getClass().getResource(BASE_PATH)).toURI())
-            .toAbsolutePath();
-      Path basePath = resourcePath.resolve(FORMAT);
-      Files.createDirectories(basePath);
-
-      return basePath.resolve(BASE_NAME + tripId + "." + FORMAT).toString();
-    } catch (URISyntaxException | IOException e) {
-      throw new RuntimeException(e);
+      throw new FileIOException("File에 내용을 쓸 수 없습니다.");
     }
   }
 }

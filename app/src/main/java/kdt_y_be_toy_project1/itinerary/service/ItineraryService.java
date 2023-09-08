@@ -7,6 +7,7 @@ import kdt_y_be_toy_project1.itinerary.dto.AddItineraryRequest;
 import kdt_y_be_toy_project1.itinerary.dto.ItineraryResponse;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryCSV;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
+import kdt_y_be_toy_project1.itinerary.exception.service.TripPeriodMismatchException;
 import kdt_y_be_toy_project1.itinerary.type.FileType;
 
 import java.util.List;
@@ -41,8 +42,6 @@ public class ItineraryService {
     }
   }
 
-
-
   public ItineraryResponse getItinerary(int tripId, int itineraryId, FileType type) {
     // fileApi를 통해 Itinerary 객체를 받아온다
 
@@ -56,8 +55,20 @@ public class ItineraryService {
   }
 
   public void addItinerary(int tripId, AddItineraryRequest request) {
+
+    validAddItineraryRequest(request);
     // fileApi를 통해 Itinerary 객체를 넣는다
     csvDao.addItineraryByTripId(tripId, ItineraryCSV.from(request));
     jsonDao.addItineraryByTripId(tripId, ItineraryJSON.from(request));
+  }
+
+  private void validAddItineraryRequest(AddItineraryRequest request){
+
+    if(request.getArrivalTime().isBefore(request.getDepartureTime())){
+      throw new TripPeriodMismatchException("도착 시간이 출발 시간보다 빠를 수 없습니다.");
+    }
+    if(request.getCheckOut().isBefore(request.getCheckIn())){
+      throw new TripPeriodMismatchException("체크아웃 시간이 체크인 시간보다 빠를 수 없습니다.");
+    }
   }
 }

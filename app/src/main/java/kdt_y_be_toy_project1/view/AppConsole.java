@@ -1,39 +1,41 @@
 package kdt_y_be_toy_project1.view;
 
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import static kdt_y_be_toy_project1.view.ViewTemplate.INSERT_ARGUMENT_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.INSERT_ONLY_JSON_OR_CSV_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.KEEP_SAVE_ITINERARY_OR_NOT_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.INSERT_ONLY_Y_OR_N_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.SAVE_MENU_HEADER;
+import static kdt_y_be_toy_project1.view.ViewTemplate.SAVE_OR_NOT_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.SELECT_FILE_FORMAT_FOR_SEARCH_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.SELECT_MENU_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.SELECT_SAVE_FILE_FORMAT_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.TRIP_DETAIL_RESPONSE_HEADER;
+import static kdt_y_be_toy_project1.view.ViewTemplate.TRIP_RESPONSE_HEADER;
+
+import kdt_y_be_toy_project1.common.util.FileFormat;
+import kdt_y_be_toy_project1.itinerary.controller.ItineraryFileController;
+import kdt_y_be_toy_project1.itinerary.controller.dto.FindItinerariesFromFileRequestDto;
+import kdt_y_be_toy_project1.itinerary.controller.dto.SaveItineraryToFileRequestDto;
+import kdt_y_be_toy_project1.itinerary.controller.dto.SaveItineraryToFileRequestDto.SaveItineraryToFileRequestDtoBuilder;
+import kdt_y_be_toy_project1.trip.controller.TripFileController;
+import kdt_y_be_toy_project1.trip.controller.dto.SaveTripToFileRequestDto;
+import kdt_y_be_toy_project1.trip.controller.dto.SaveTripToFileRequestDto.SaveTripToFileRequestDtoBuilder;
 import lombok.Getter;
 
 public class AppConsole {
 
-    private static final String SELECT_MENU_DISPLAY = """
-        ==========================================================
-               #  여행 여정을 기록과 관리하는 SNS 서비스  #
+    private final TripFileController tripFileController;
+    private final ItineraryFileController itineraryFileController;
+    private final TextOutput output;
 
-            1. 여행기록
-            2. 여정기록
-            3. 여행조회
-            4. 여정조회
-            5. 종료
-        ==========================================================
-        시작할 메뉴번호를 입력 하세요:\t""";
-    private static final String SAVE_TRIP_DISPLAY = """
-        ==========================================================
-                        #    여행기록 메뉴    #
-        ==========================================================
-        """;
-    private static final String INSERT_ARGUMENT_DISPLAY = "%s을 입력하세요:\t";
-    private static final String INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY = "입력 포맷(yyyy-mm-dd)을 지켜주세요. (예: 2023-09-05)";
-    private static final String ASK_FOR_SAVE_DISPLAY = "저장하시겠습니까?(Y/N):\t";
-
-    @Getter private boolean shutdown;
+    @Getter
+    private boolean shutdown;
     private Processor processor;
-    private TextOutput output;
-
 
     public AppConsole() {
+        this.tripFileController = new TripFileController();
+        this.itineraryFileController = new ItineraryFileController();
         output = new TextOutput();
         processor = getSelectMenuProcessor();
     }
@@ -45,90 +47,88 @@ public class AppConsole {
             case "1" -> getInsertTripProcessor();
             case "2" -> getInsertItineraryProcessor();
             case "3" -> getSearchTripProcessor();
-            case "4" -> getSearchItineraryProcessor();
-            case "5" -> getShutdownProcessor();
+            case "4" -> getShutdownProcessor();
             default -> getSelectMenuProcessor();
         };
     }
 
+    // CASE 1
     private Processor getInsertTripProcessor() {
-
-        output.println(SAVE_TRIP_DISPLAY);
-        return getInsertTripStartDateProcessor();
+        output.println(SAVE_MENU_HEADER.formatted("여행"));
+        SaveTripToFileRequestDtoBuilder builder = SaveTripToFileRequestDto.builder();
+        return getInsertTripStartDateProcessor(builder);
     }
 
-    private Processor getInsertTripStartDateProcessor() {
+    private Processor getInsertTripStartDateProcessor(SaveTripToFileRequestDtoBuilder builder) {
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("시작일(yyyy-mm-dd)"));
-        return input -> {
-            try {
-                LocalDate startDate = parseInputToLocalDate(input);
-                return getInsertTripEndDateProcessor(new TripCreateRequest(null, startDate, null));
-            } catch (DateTimeParseException e) {
-                output.println(INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY);
-                return getInsertTripStartDateProcessor();
-            }
-        };
+        return input -> getInsertTripEndDateProcessor(builder.startDate(input));
     }
 
-    private static LocalDate parseInputToLocalDate(String input) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return LocalDate.parse(input, dateTimeFormatter);
-    }
-
-    private Processor getInsertTripEndDateProcessor(TripCreateRequest tripCreateRequest) {
+    private Processor getInsertTripEndDateProcessor(SaveTripToFileRequestDtoBuilder builder) {
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("종료일(yyyy-mm-dd)"));
-        LocalDate startDate = tripCreateRequest.startDate();
-        return input -> {
-            try {
-                LocalDate endDate = parseInputToLocalDate(input);
-
-                if (endDate.isBefore(startDate)) {
-                    output.println("종료일은 시작일보다 빠를 수 없습니다.");
-                    return getInsertTripEndDateProcessor(tripCreateRequest);
-                }
-
-                return getInsertTripNameProcessor(new TripCreateRequest(null, startDate, endDate));
-            } catch (DateTimeParseException e) {
-                output.println(INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY);
-                return getInsertTripEndDateProcessor(tripCreateRequest);
-            }
-        };
+        return input -> getInsertTripNameProcessor(builder.endDate(input));
     }
 
-    private Processor getInsertTripNameProcessor(TripCreateRequest tripCreateRequest) {
+    private Processor getInsertTripNameProcessor(SaveTripToFileRequestDtoBuilder builder) {
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("여행명"));
-        return input -> {
-            TripCreateRequest result = new TripCreateRequest(input, tripCreateRequest.startDate(),
-                tripCreateRequest.endDate());
-
-            return getSaveOrNotTripProcessor(result);
-        };
+        return input -> getSaveOrNotTripProcessor(builder.tripName(input));
     }
 
-    private Processor getSaveOrNotTripProcessor(TripCreateRequest tripCreateRequest) {
-        output.println(tripCreateRequest.toString());
-        output.print(ASK_FOR_SAVE_DISPLAY);
+    private Processor getSaveOrNotTripProcessor(SaveTripToFileRequestDtoBuilder builder) {
+        output.println(builder.toString());
+        output.print(SAVE_OR_NOT_DISPLAY);
         return input -> {
             switch (input.toLowerCase()) {
                 case "y" -> {
-                    output.println("저장완료");
-                    throw new UnsupportedOperationException();
+                    return getSelectSaveTripFormatProcessor(builder);
                 }
-
                 case "n" -> {
-                    return getInsertTripProcessor();
+                    return getSelectMenuProcessor();
                 }
                 default -> {
-                    output.print("'Y' 또는 'N' 만 입력해주세요");
-                    return getSaveOrNotTripProcessor(tripCreateRequest);
+                    output.print(INSERT_ONLY_Y_OR_N_DISPLAY);
+                    return getSaveOrNotTripProcessor(builder);
                 }
             }
-
         };
+    }
+
+    private Processor getSelectSaveTripFormatProcessor(SaveTripToFileRequestDtoBuilder builder) {
+        output.print(SELECT_SAVE_FILE_FORMAT_DISPLAY);
+        return input -> {
+            String fileFormat = input.toUpperCase();
+
+            if (isSupportedFileFormat(fileFormat)) {
+                output.print(INSERT_ONLY_JSON_OR_CSV_DISPLAY);
+                return getSelectSaveTripFormatProcessor(builder);
+            }
+
+            long savedTripId = tripFileController.saveTrip(builder.fileFormat(fileFormat).build());
+            itineraryFileController.createItineraryFile(savedTripId);
+
+            return getInsertItineraryProcessor(savedTripId);
+        };
+    }
+
+    private static boolean isSupportedFileFormat(String fileFormat) {
+        return !fileFormat.equals("JSON") && !fileFormat.equals("CSV");
+    }
+
+    /**
+     * It will be run right after getSelectSaveTripFormatProcessor()
+     */
+    private Processor getInsertItineraryProcessor(long id) {
+        output.println(SAVE_MENU_HEADER.formatted("여정"));
+
+        SaveItineraryToFileRequestDtoBuilder builder = SaveItineraryToFileRequestDto.builder();
+        return getInsertItineraryDeparturePlaceProcessor(builder.tripId(id));
     }
 
     private Processor getInsertItineraryProcessor() {
 
+    private Processor getInsertItineraryDepartureTimeProcessor(
+        SaveItineraryToFileRequestDtoBuilder builder) {
+    }
         return input -> {
             throw new UnsupportedOperationException();
         };

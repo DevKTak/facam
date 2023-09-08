@@ -2,9 +2,9 @@ package kdt_y_be_toy_project1.itinerary.dao;
 
 import kdt_y_be_toy_project1.common.data.DataFileProvider;
 import kdt_y_be_toy_project1.common.data.ItineraryTestDataFileProvider;
+import kdt_y_be_toy_project1.common.util.FileFormat;
 import kdt_y_be_toy_project1.itinerary.entity.ItineraryJSON;
 import kdt_y_be_toy_project1.itinerary.exception.file.FileIOException;
-import kdt_y_be_toy_project1.itinerary.type.FileType;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -20,7 +20,7 @@ class ItineraryJSONDaoTest {
 
     @BeforeAll
     static void beforeAll() {
-        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileType.JSON);
+        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileFormat.JSON);
         itineraryTestJSONDataFile.deleteOnExit();
     }
 
@@ -28,7 +28,7 @@ class ItineraryJSONDaoTest {
     @Order(1)
     @Test
     void shouldCreateItineraryToFile() {
-        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileType.JSON);
+        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileFormat.JSON);
         itineraryJSONDao.createItineraryToFile(itineraryTestJSONDataFile);
         assertTrue(itineraryTestJSONDataFile.exists());
     }
@@ -37,7 +37,7 @@ class ItineraryJSONDaoTest {
     @Test
     void shouldGetItineraryListFromFile() {
         long tripId = 1;
-        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileType.JSON);
+        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileFormat.JSON);
         itineraryTestJSONDataFile.deleteOnExit();
         var list = itineraryJSONDao.getItineraryListFromFile(itineraryTestJSONDataFile);
     }
@@ -54,7 +54,7 @@ class ItineraryJSONDaoTest {
                 .checkIn("2023-08-15T12:00:00")
                 .checkOut("2023-08-30T10:00:00")
                 .build();
-        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileType.JSON);
+        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileFormat.JSON);
         itineraryTestJSONDataFile.deleteOnExit();
         assertThrows(FileIOException.class, () -> {
             itineraryJSONDao.addItineraryToFile(itineraryTestJSONDataFile, itinerary);
@@ -67,7 +67,7 @@ class ItineraryJSONDaoTest {
     void shouldGetItineraryAtIndex() {
         long tripId = 1;
         long itineraryId = 1;
-        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileType.JSON);
+        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileFormat.JSON);
         itineraryTestJSONDataFile.deleteOnExit();
         itineraryJSONDao.getItineraryFromFile(itineraryTestJSONDataFile, itineraryId);
     }
@@ -86,7 +86,7 @@ class ItineraryJSONDaoTest {
                 .build();
 
         long tripId = 1;
-        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileType.JSON);
+        File itineraryTestJSONDataFile = dataFileProvider.getDataFile(tripId, FileFormat.JSON);
         itineraryTestJSONDataFile.deleteOnExit();
         itineraryJSONDao.addItineraryToFile(itineraryTestJSONDataFile, itinerary);
         var list = itineraryJSONDao.getItineraryListFromFile(itineraryTestJSONDataFile);

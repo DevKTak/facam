@@ -15,7 +15,7 @@ import java.io.*;
 import java.util.Collections;
 import java.util.List;
 
-import static kdt_y_be_toy_project1.itinerary.type.FileType.CSV;
+import static kdt_y_be_toy_project1.common.util.FileFormat.CSV;
 
 public class ItineraryCSVDao implements ItineraryDao<ItineraryCSV> {
 

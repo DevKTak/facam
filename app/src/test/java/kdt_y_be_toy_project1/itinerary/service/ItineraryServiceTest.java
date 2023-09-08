@@ -2,9 +2,9 @@ package kdt_y_be_toy_project1.itinerary.service;
 
 import kdt_y_be_toy_project1.common.data.DataFileProvider;
 import kdt_y_be_toy_project1.common.data.ItineraryTestDataFileProvider;
+import kdt_y_be_toy_project1.common.util.FileFormat;
 import kdt_y_be_toy_project1.itinerary.dto.AddItineraryRequest;
 import kdt_y_be_toy_project1.itinerary.dto.ItineraryResponse;
-import kdt_y_be_toy_project1.itinerary.type.FileType;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -33,8 +33,8 @@ class ItineraryServiceTest {
 
     itineraryService = new ItineraryService(dataFileProvider);
 
-    File itineraryTestCSVDataFile = dataFileProvider.getDataFile(1, FileType.CSV);
-    File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileType.JSON);
+    File itineraryTestCSVDataFile = dataFileProvider.getDataFile(1, FileFormat.CSV);
+    File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileFormat.JSON);
 
     itineraryTestCSVDataFile.deleteOnExit();
     itineraryTestJSONDataFile.deleteOnExit();
@@ -60,7 +60,7 @@ class ItineraryServiceTest {
     @Test
     void shouldExistJSONItineraryFile() {
       DataFileProvider dataFileProvider = new ItineraryTestDataFileProvider();
-      File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileType.JSON);
+      File itineraryTestJSONDataFile = dataFileProvider.getDataFile(1, FileFormat.JSON);
       assertTrue(itineraryTestJSONDataFile.exists());
     }
 
@@ -69,7 +69,7 @@ class ItineraryServiceTest {
     @Test
     void shouldExistCSVItineraryFile() {
       DataFileProvider dataFileProvider = new ItineraryTestDataFileProvider();
-      File itineraryTestCSVDataFile = dataFileProvider.getDataFile(1, FileType.CSV);
+      File itineraryTestCSVDataFile = dataFileProvider.getDataFile(1, FileFormat.CSV);
       assertTrue(itineraryTestCSVDataFile.exists());
     }
   }
@@ -103,7 +103,7 @@ class ItineraryServiceTest {
     @Test
     void shouldEqualTOExpectedItineraryList() {
       List<ItineraryResponse> itineraryJSONResponseList =
-          itineraryService.getAllItineraryList(1, FileType.JSON);
+          itineraryService.getAllItineraryList(1, FileFormat.JSON);
 
 //      itineraryJSONResponseList.forEach(System.out::println);
 
@@ -115,7 +115,7 @@ class ItineraryServiceTest {
     @Test
     void getAllItineraryListFromCSV() {
       List<ItineraryResponse> itineraryCSVResponseList =
-          itineraryService.getAllItineraryList(1, FileType.CSV);
+          itineraryService.getAllItineraryList(1, FileFormat.CSV);
 
 //      itineraryCSVResponseList.forEach(System.out::println);
 
@@ -134,7 +134,7 @@ class ItineraryServiceTest {
     @Test
     void getAllItineraryListFromJSON() {
       List<ItineraryResponse> itineraryJSONResponseList =
-          itineraryService.getAllItineraryList(tripId, FileType.JSON);
+          itineraryService.getAllItineraryList(tripId, FileFormat.JSON);
       itineraryJSONResponseList.forEach(System.out::println);
     }
 
@@ -142,7 +142,7 @@ class ItineraryServiceTest {
     @Test
     void getAllItineraryListFromCSV() {
       List<ItineraryResponse> itineraryCSVResponseList =
-          itineraryService.getAllItineraryList(tripId, FileType.CSV);
+          itineraryService.getAllItineraryList(tripId, FileFormat.CSV);
       itineraryCSVResponseList.forEach(System.out::println);
     }
   }
@@ -159,7 +159,7 @@ class ItineraryServiceTest {
     @Test
     void getAllItineraryListFromJSON() {
       ItineraryResponse itineraryJSONResponse =
-          itineraryService.getItinerary(tripId, itineraryId, FileType.JSON);
+          itineraryService.getItinerary(tripId, itineraryId, FileFormat.JSON);
 
       compareItineraryAttributes(itineraryJSONResponse);
     }
@@ -168,7 +168,7 @@ class ItineraryServiceTest {
     @Test
     void getAllItineraryListFromCSV() {
       ItineraryResponse itineraryCSVResponse =
-          itineraryService.getItinerary(tripId, itineraryId, FileType.CSV);
+          itineraryService.getItinerary(tripId, itineraryId, FileFormat.CSV);
 
       compareItineraryAttributes(itineraryCSVResponse);
     }

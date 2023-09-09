@@ -15,7 +15,7 @@ public class TripFileController {
     private final TripService tripCsvService = new TripCsvService();
 
     public long saveTrip(SaveTripToFileRequestDto request) {
-        return switch (request.getFileFormat()) {
+        return switch (request.fileFormat()) {
             case JSON -> tripJsonService.save(request.toServiceDto());
             case CSV -> tripCsvService.save(request.toServiceDto());
         };

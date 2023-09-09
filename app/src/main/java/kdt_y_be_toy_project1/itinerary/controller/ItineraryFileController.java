@@ -15,7 +15,7 @@ public class ItineraryFileController {
     }
 
     public void saveItinerary(SaveItineraryToFileRequestDto request) {
-        itineraryService.addItinerary(request.getTripId(), request.toServiceDto());
+        itineraryService.addItinerary(request.tripId(), request.toServiceDto());
     }
 
     public List<ItineraryControllerResponse> findItinerariesByTripId(

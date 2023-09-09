@@ -19,7 +19,7 @@
 
 - 여행 및 여정 정보를 콘솔로 입력받아 기록하고 조회할 수 있는 Java 어플리케이션입니다.
 - 여행 및 여정 정보는 파일 시스템에 JSON과 CSV로 저장됩니다.
-- **3-Layered MVC 패턴**으로 설계했습니다.
+- **3-Layered(컨트롤러-서비스-DAO) MVC 패턴**으로 설계했습니다.
 - JSON과 CSV 관련 오픈소스 라이브러리를 사용하여 개발했습니다.
 - 여행, 여정, 뷰에 대한 테스트 코드를 작성했습니다.
 
@@ -44,20 +44,24 @@
 ```tree
 Main
 ├── Trip (여행)
+│   └── controller (뷰에 전달할 컨트롤러 객체)
+│       └── dto (뷰용 데이터 전달 객체)
 │   ├── dao (파일 create, update, read API)
-│   ├── dto (인터페이스용 데이터 객체)
+│   ├── dto (서비스용 데이터 전달 객체)
 │   ├── domain (데이터 객체)
 │   ├── service (뷰에 전달할 인터페이스)
 │   └── util (CSV 변환에 사용하는 유틸 객체)
 ├── Itinerary (여정)
+│   └── controller (뷰에 전달할 컨트롤러 객체)
+│       └── dto (뷰용 데이터 전달 객체)
 │   ├── dao (파일 create, update, read API)
-│   ├── dto (인터페이스용 데이터 객체)
+│   ├── dto (서비스용 데이터 전달 객체)
 │   ├── entity (데이터 객체)
 │   ├── exception (예외처리용 객체)
 │   ├── type (파일 타입 구분 enum)
 │   └── service (뷰에 전달할 인터페이스)
 └── controller (뷰)
-    └── console (콘솔 뷰 객체)
+    └── console (콘솔 뷰 객체)
 
 resources (데이터 파일 저장 경로)
 ├── Trip

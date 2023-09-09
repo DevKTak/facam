@@ -1,10 +1,14 @@
 package kdt_y_be_toy_project1.view;
 
 
+import static kdt_y_be_toy_project1.common.util.input.Precondition.require;
+import static kdt_y_be_toy_project1.view.ViewTemplate.BLANK_NOT_REQUIRE;
 import static kdt_y_be_toy_project1.view.ViewTemplate.INSERT_ARGUMENT_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.INSERT_CORRECT_LOCAL_DATE_TIME_FORMAT_DISPLAY;
 import static kdt_y_be_toy_project1.view.ViewTemplate.INSERT_ONLY_JSON_OR_CSV_DISPLAY;
-import static kdt_y_be_toy_project1.view.ViewTemplate.KEEP_SAVE_ITINERARY_OR_NOT_DISPLAY;
 import static kdt_y_be_toy_project1.view.ViewTemplate.INSERT_ONLY_Y_OR_N_DISPLAY;
+import static kdt_y_be_toy_project1.view.ViewTemplate.KEEP_SAVE_ITINERARY_OR_NOT_DISPLAY;
 import static kdt_y_be_toy_project1.view.ViewTemplate.SAVE_MENU_HEADER;
 import static kdt_y_be_toy_project1.view.ViewTemplate.SAVE_OR_NOT_DISPLAY;
 import static kdt_y_be_toy_project1.view.ViewTemplate.SELECT_FILE_FORMAT_FOR_SEARCH_DISPLAY;
@@ -13,7 +17,9 @@ import static kdt_y_be_toy_project1.view.ViewTemplate.SELECT_SAVE_FILE_FORMAT_DI
 import static kdt_y_be_toy_project1.view.ViewTemplate.TRIP_DETAIL_RESPONSE_HEADER;
 import static kdt_y_be_toy_project1.view.ViewTemplate.TRIP_RESPONSE_HEADER;
 
+import java.time.format.DateTimeParseException;
 import kdt_y_be_toy_project1.common.util.FileFormat;
+import kdt_y_be_toy_project1.common.util.input.InputException;
 import kdt_y_be_toy_project1.itinerary.controller.ItineraryFileController;
 import kdt_y_be_toy_project1.itinerary.controller.dto.FindItinerariesFromFileRequestDto;
 import kdt_y_be_toy_project1.itinerary.controller.dto.SaveItineraryToFileRequestDto;
@@ -22,6 +28,7 @@ import kdt_y_be_toy_project1.trip.controller.TripFileController;
 import kdt_y_be_toy_project1.trip.controller.dto.SaveTripToFileRequestDto;
 import kdt_y_be_toy_project1.trip.controller.dto.SaveTripToFileRequestDto.SaveTripToFileRequestDtoBuilder;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 public class AppConsole {
 
@@ -55,23 +62,46 @@ public class AppConsole {
     // CASE 1
     private Processor getInsertTripProcessor() {
         output.println(SAVE_MENU_HEADER.formatted("여행"));
-        SaveTripToFileRequestDtoBuilder builder = SaveTripToFileRequestDto.builder();
-        return getInsertTripStartDateProcessor(builder);
+        return getInsertTripStartDateProcessor();
     }
 
-    private Processor getInsertTripStartDateProcessor(SaveTripToFileRequestDtoBuilder builder) {
-        output.print(INSERT_ARGUMENT_DISPLAY.formatted("시작일(yyyy-mm-dd)"));
-        return input -> getInsertTripEndDateProcessor(builder.startDate(input));
+    private Processor getInsertTripStartDateProcessor() {
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("시작일(yyyy-MM-dd)"));
+        return input -> {
+            try {
+                return getInsertTripEndDateProcessor(SaveTripToFileRequestDto.builder().startDate(input));
+            } catch (DateTimeParseException e) {
+                output.println(INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY);
+                return getInsertTripStartDateProcessor();
+            }
+        };
     }
 
     private Processor getInsertTripEndDateProcessor(SaveTripToFileRequestDtoBuilder builder) {
-        output.print(INSERT_ARGUMENT_DISPLAY.formatted("종료일(yyyy-mm-dd)"));
-        return input -> getInsertTripNameProcessor(builder.endDate(input));
+        output.println(builder.toString());
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("종료일(yyyy-MM-dd)"));
+        return input -> {
+            try {
+                return getInsertTripNameProcessor(builder.endDate(input));
+            } catch (DateTimeParseException e) {
+                output.println(INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY);
+                return getInsertTripEndDateProcessor(builder);
+            }
+        };
     }
 
     private Processor getInsertTripNameProcessor(SaveTripToFileRequestDtoBuilder builder) {
+        output.println(builder.toString());
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("여행명"));
-        return input -> getSaveOrNotTripProcessor(builder.tripName(input));
+        return input -> {
+            try {
+                require(!input.isBlank(), "공백은 허용하지 않습니다.");
+                return getSaveOrNotTripProcessor(builder.tripName(input));
+            } catch (InputException e) {
+                output.println(e.getMessage());
+                return getInsertTripNameProcessor(builder);
+            }
+        };
     }
 
     private Processor getSaveOrNotTripProcessor(SaveTripToFileRequestDtoBuilder builder) {
@@ -134,45 +164,102 @@ public class AppConsole {
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("여행 ID"));
 
         return input -> {
-            SaveItineraryToFileRequestDtoBuilder builder = SaveItineraryToFileRequestDto.builder();
-            return getInsertItineraryDeparturePlaceProcessor(builder.tripId(Long.parseLong(input)));
+            try {
+                require(StringUtils.isNumeric(input), "숫자타입을 입력해야 합니다.");
+                SaveItineraryToFileRequestDtoBuilder builder = SaveItineraryToFileRequestDto.builder();
+                return getInsertItineraryDeparturePlaceProcessor(
+                    builder.tripId(Long.parseLong(input)));
+            } catch (InputException e) {
+                output.println(e.getMessage());
+                return getInsertItineraryProcessor();
+            }
         };
     }
 
     private Processor getInsertItineraryDeparturePlaceProcessor(
         SaveItineraryToFileRequestDtoBuilder builder) {
+        output.println(builder.toString());
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("출발지"));
-        return input -> getInsertItineraryDestinationProcessor(builder.departurePlace(input));
+        return input -> {
+            try {
+                require(!input.isBlank(), BLANK_NOT_REQUIRE);
+                return getInsertItineraryDestinationProcessor(builder.departurePlace(input));
+            } catch (InputException e) {
+                output.println(e.getMessage());
+                return getInsertItineraryDeparturePlaceProcessor(builder);
+            }
+        };
     }
 
     private Processor getInsertItineraryDestinationProcessor(
         SaveItineraryToFileRequestDtoBuilder builder) {
-        output.print(INSERT_ARGUMENT_DISPLAY.formatted("도착 장소"));
-        return input -> getInsertItineraryDepartureTimeProcessor(builder.destination(input));
+        output.println(builder.toString());
+        output.print(INSERT_ARGUMENT_DISPLAY.formatted("도착지"));
+        return input -> {
+            try {
+                require(!input.isBlank(), BLANK_NOT_REQUIRE);
+                return getInsertItineraryDepartureTimeProcessor(builder.destination(input));
+            } catch (InputException e) {
+                output.println(e.getMessage());
+                return getInsertItineraryDestinationProcessor(builder);
+            }
+        };
     }
 
     private Processor getInsertItineraryDepartureTimeProcessor(
         SaveItineraryToFileRequestDtoBuilder builder) {
+        output.println(builder.toString());
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("출발 시간(yyyy-MM-dd HH:mm:ss)"));
-        return input -> getInsertItineraryArrivalTimeProcessor(builder.departureTime(input));
+        return input -> {
+            try {
+                return getInsertItineraryArrivalTimeProcessor(builder.departureTime(input));
+            } catch (DateTimeParseException e) {
+                output.println(INSERT_CORRECT_LOCAL_DATE_TIME_FORMAT_DISPLAY);
+                return getInsertItineraryDepartureTimeProcessor(builder);
+            }
+        };
     }
 
     private Processor getInsertItineraryArrivalTimeProcessor(
         SaveItineraryToFileRequestDtoBuilder builder) {
+        output.println(builder.toString());
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("도착 시간(yyyy-MM-dd HH:mm:ss)"));
-        return input -> getInsertItineraryCheckInProcessor(builder.arrivalTime(input));
+        return input -> {
+            try {
+                return getInsertItineraryCheckInProcessor(builder.arrivalTime(input));
+            } catch (DateTimeParseException e) {
+                output.println(INSERT_CORRECT_LOCAL_DATE_TIME_FORMAT_DISPLAY);
+                return getInsertItineraryArrivalTimeProcessor(builder);
+            }
+        };
     }
 
     private Processor getInsertItineraryCheckInProcessor(
         SaveItineraryToFileRequestDtoBuilder builder) {
+        output.println(builder.toString());
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("CheckIn 시간(yyyy-MM-dd HH:mm:ss)"));
-        return input -> getInsertItineraryCheckOutProcessor(builder.checkIn(input));
+        return input -> {
+            try {
+                return getInsertItineraryCheckOutProcessor(builder.checkIn(input));
+            } catch (DateTimeParseException e) {
+                output.println(INSERT_CORRECT_LOCAL_DATE_TIME_FORMAT_DISPLAY);
+                return getInsertItineraryCheckInProcessor(builder);
+            }
+        };
     }
 
     private Processor getInsertItineraryCheckOutProcessor(
         SaveItineraryToFileRequestDtoBuilder builder) {
+        output.println(builder.toString());
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("CheckOut 시간(yyyy-MM-dd HH:mm:ss)"));
-        return input -> getSaveOrNotItineraryProcessor(builder.checkOut(input));
+        return input -> {
+            try {
+                return getSaveOrNotItineraryProcessor(builder.checkOut(input));
+            } catch (DateTimeParseException e) {
+                output.println(INSERT_CORRECT_LOCAL_DATE_TIME_FORMAT_DISPLAY);
+                return getInsertItineraryCheckOutProcessor(builder);
+            }
+        };
     }
 
     private Processor getSaveOrNotItineraryProcessor(SaveItineraryToFileRequestDtoBuilder builder) {
@@ -208,7 +295,7 @@ public class AppConsole {
             SaveItineraryToFileRequestDto saveDto = builder.fileFormat(fileFormat).build();
 
             itineraryFileController.saveItinerary(saveDto);
-            return getKeepSaveItineraryOrNotProcessor(saveDto.getTripId());
+            return getKeepSaveItineraryOrNotProcessor(saveDto.tripId());
         };
     }
 

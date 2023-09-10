@@ -15,10 +15,13 @@ public class TripFileController {
     private final TripService tripCsvService = new TripCsvService();
 
     public long saveTrip(SaveTripToFileRequestDto request) {
-        return switch (request.fileFormat()) {
-            case JSON -> tripJsonService.save(request.toServiceDto());
-            case CSV -> tripCsvService.save(request.toServiceDto());
-        };
+            Long savedJsonId = tripJsonService.save(request.toServiceDto());
+        Long savedCsvId = tripCsvService.save(request.toServiceDto());
+
+        if (!savedJsonId.equals(savedCsvId)) {
+            throw new IllegalStateException("json_file과 csv_file의 동기화가 되어있지 않습니다.");
+        }
+        return savedCsvId;
     }
 
     public List<TripControllerResponse> findAllTripsFromFile(FileFormat format) {

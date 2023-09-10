@@ -3,7 +3,6 @@ package kdt_y_be_toy_project1.itinerary.controller.dto;
 import static kdt_y_be_toy_project1.common.util.DateBindingFormatter.LOCAL_DATE_TIME_FORMATTER;
 
 import java.time.LocalDateTime;
-import kdt_y_be_toy_project1.common.util.FileFormat;
 import kdt_y_be_toy_project1.itinerary.dto.AddItineraryRequest;
 
 public record SaveItineraryToFileRequestDto(
@@ -13,8 +12,7 @@ public record SaveItineraryToFileRequestDto(
     LocalDateTime departureTime,
     LocalDateTime arrivalTime,
     LocalDateTime checkIn,
-    LocalDateTime checkOut,
-    FileFormat fileFormat
+    LocalDateTime checkOut
 ) {
 
     public AddItineraryRequest toServiceDto() {
@@ -40,7 +38,6 @@ public record SaveItineraryToFileRequestDto(
         private LocalDateTime arrivalTime;
         private LocalDateTime checkIn;
         private LocalDateTime checkOut;
-        private FileFormat fileFormat;
 
         public SaveItineraryToFileRequestDtoBuilder tripId(long tripId) {
             this.tripId = tripId;
@@ -77,14 +74,9 @@ public record SaveItineraryToFileRequestDto(
             return this;
         }
 
-        public SaveItineraryToFileRequestDtoBuilder fileFormat(String fileFormat) {
-            this.fileFormat = FileFormat.valueOf(fileFormat);
-            return this;
-        }
-
         public SaveItineraryToFileRequestDto build() {
             return new SaveItineraryToFileRequestDto(tripId, departurePlace, destination,
-                departureTime, arrivalTime, checkIn, checkOut, fileFormat);
+                departureTime, arrivalTime, checkIn, checkOut);
         }
 
         @Override

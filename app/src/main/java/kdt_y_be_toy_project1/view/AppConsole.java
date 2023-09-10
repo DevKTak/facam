@@ -13,7 +13,6 @@ import static kdt_y_be_toy_project1.view.ViewTemplate.SAVE_MENU_HEADER;
 import static kdt_y_be_toy_project1.view.ViewTemplate.SAVE_OR_NOT_DISPLAY;
 import static kdt_y_be_toy_project1.view.ViewTemplate.SELECT_FILE_FORMAT_FOR_SEARCH_DISPLAY;
 import static kdt_y_be_toy_project1.view.ViewTemplate.SELECT_MENU_DISPLAY;
-import static kdt_y_be_toy_project1.view.ViewTemplate.SELECT_SAVE_FILE_FORMAT_DISPLAY;
 import static kdt_y_be_toy_project1.view.ViewTemplate.TRIP_DETAIL_RESPONSE_HEADER;
 import static kdt_y_be_toy_project1.view.ViewTemplate.TRIP_RESPONSE_HEADER;
 
@@ -69,7 +68,8 @@ public class AppConsole {
         output.print(INSERT_ARGUMENT_DISPLAY.formatted("시작일(yyyy-MM-dd)"));
         return input -> {
             try {
-                return getInsertTripEndDateProcessor(SaveTripToFileRequestDto.builder().startDate(input));
+                return getInsertTripEndDateProcessor(
+                    SaveTripToFileRequestDto.builder().startDate(input));
             } catch (DateTimeParseException e) {
                 output.println(INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY);
                 return getInsertTripStartDateProcessor();
@@ -110,7 +110,8 @@ public class AppConsole {
         return input -> {
             switch (input.toLowerCase()) {
                 case "y" -> {
-                    return getSelectSaveTripFormatProcessor(builder);
+                    return getInsertItineraryProcessor(
+                        tripFileController.saveTrip(builder.build()));
                 }
                 case "n" -> {
                     return getSelectMenuProcessor();
@@ -121,27 +122,6 @@ public class AppConsole {
                 }
             }
         };
-    }
-
-    private Processor getSelectSaveTripFormatProcessor(SaveTripToFileRequestDtoBuilder builder) {
-        output.print(SELECT_SAVE_FILE_FORMAT_DISPLAY);
-        return input -> {
-            String fileFormat = input.toUpperCase();
-
-            if (isSupportedFileFormat(fileFormat)) {
-                output.print(INSERT_ONLY_JSON_OR_CSV_DISPLAY);
-                return getSelectSaveTripFormatProcessor(builder);
-            }
-
-            long savedTripId = tripFileController.saveTrip(builder.fileFormat(fileFormat).build());
-            itineraryFileController.createItineraryFile(savedTripId);
-
-            return getInsertItineraryProcessor(savedTripId);
-        };
-    }
-
-    private static boolean isSupportedFileFormat(String fileFormat) {
-        return !fileFormat.equals("JSON") && !fileFormat.equals("CSV");
     }
 
     /**
@@ -268,7 +248,11 @@ public class AppConsole {
         return input -> {
             switch (input.toLowerCase()) {
                 case "y" -> {
-                    return getSelectSaveItineraryFormatProcessor(builder);
+                    SaveItineraryToFileRequestDto saveDto = builder.build();
+
+                    itineraryFileController.createItineraryFile(saveDto.tripId());
+                    itineraryFileController.saveItinerary(saveDto);
+                    return getKeepSaveItineraryOrNotProcessor(saveDto.tripId());
                 }
                 case "n" -> {
                     return getSelectMenuProcessor();
@@ -278,24 +262,6 @@ public class AppConsole {
                     return getSaveOrNotItineraryProcessor(builder);
                 }
             }
-        };
-    }
-
-    private Processor getSelectSaveItineraryFormatProcessor(
-        SaveItineraryToFileRequestDtoBuilder builder) {
-        output.print(SELECT_SAVE_FILE_FORMAT_DISPLAY);
-        return input -> {
-            String fileFormat = input.toUpperCase();
-
-            if (isSupportedFileFormat(fileFormat)) {
-                output.println(INSERT_ONLY_JSON_OR_CSV_DISPLAY);
-                return getSelectSaveItineraryFormatProcessor(builder);
-            }
-
-            SaveItineraryToFileRequestDto saveDto = builder.fileFormat(fileFormat).build();
-
-            itineraryFileController.saveItinerary(saveDto);
-            return getKeepSaveItineraryOrNotProcessor(saveDto.tripId());
         };
     }
 
@@ -334,6 +300,10 @@ public class AppConsole {
 
             return getSearchItinerariesByTripIdProcessor(fileFormat);
         };
+    }
+
+    private static boolean isSupportedFileFormat(String fileFormat) {
+        return !fileFormat.equals("JSON") && !fileFormat.equals("CSV");
     }
 
     private Processor getSearchItinerariesByTripIdProcessor(String fileFormat) {

@@ -18,13 +18,6 @@ public final class ViewTemplate {
         ==========================================================
         """;
 
-    public static final String SAVE_TRIP_FORMAT_DISPLAY = """
-        ==========================================================
-                             #  여행 기록  #
-                일정  : %s ~ %s
-                여행명: %s
-        ==========================================================
-            """;
     public static final String TRIP_RESPONSE_HEADER = """
         =================================================================
            id                 이름               시작일        종료일
@@ -39,16 +32,14 @@ public final class ViewTemplate {
 
     public static final String INSERT_ARGUMENT_DISPLAY = "%s을 입력하세요:\t";
     public static final String INSERT_CORRECT_LOCAL_DATE_FORMAT_DISPLAY = "입력 포맷(yyyy-MM-dd)을 지켜주세요. (예: 2023-09-05)";
-    public static final String INSERT_CORRECT_LOCAL_DATE_TIME_FORMAT_DISPLAY = "입력 포맷(yyyy-MM-dd HH:mm:ss)을 지켜주세요. (예: 2023-09-05 : 11:30:00)";
+    public static final String INSERT_CORRECT_LOCAL_DATE_TIME_FORMAT_DISPLAY = "입력 포맷(yyyy-MM-dd HH:mm:ss)을 지켜주세요. (예: 2023-09-05 11:30:00)";
     public static final String SAVE_OR_NOT_DISPLAY = "저장하시겠습니까?(Y/N):\t";
-    public static final String SAVE_DONE_DISPLAY = "저장완료!";
     public static final String BLANK_NOT_REQUIRE = "공백은 허용하지 않습니다.";
     public static final String INSERT_ONLY_Y_OR_N_DISPLAY = "'Y' 또는 'N' 만 입력해주세요";
     public static final String SELECT_SAVE_FILE_FORMAT_DISPLAY = "어떤 파일로 저장하시겠습니까? (json, csv):\t";
     public static final String INSERT_ONLY_JSON_OR_CSV_DISPLAY = "'json' 또는 'csv' 만 입력해주세요";
     public static final String KEEP_SAVE_ITINERARY_OR_NOT_DISPLAY = "여정을 계속 저장하시겠습니까? (Y/N):\t";
     public static final String SELECT_FILE_FORMAT_FOR_SEARCH_DISPLAY = "어떤 파일로 검색하시겠습니까? (json, csv):\t";
-    public static final String SELECT_TRIP_ID_DISPLAY = "검색할 아이디가 있나요?:\t";
 
 
     private ViewTemplate() {

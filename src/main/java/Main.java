@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -158,7 +158,7 @@ public class Main {
 
 	// HttpClient, HttpGet 객체 생성
 	private static String httpGet(String requestUrl) {
-		HttpClient client = HttpClientBuilder.create().build();
+		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpGet getRequest = new HttpGet(requestUrl);
 		getRequest.addHeader("Authorization", "KakaoAK " + REST_API_KEY);
 
